@@ -4,6 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
 <title>背单词</title>
+<link rel="icon" href="data:,">
 <style>
 *{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
 body{font-family:-apple-system,"PingFang SC","Microsoft YaHei",sans-serif;background:#0f1115;color:#e8eaed;min-height:100vh;line-height:1.6}
@@ -24,12 +25,12 @@ body{font-family:-apple-system,"PingFang SC","Microsoft YaHei",sans-serif;backgr
 .link{flex:1;background:#171a21;border:1px solid #252a35;color:#9aa3b5;border-radius:12px;padding:12px;font-size:13px;cursor:pointer;font-family:inherit;transition:.18s}
 .link:hover{color:#e8eaed;border-color:#3d4557}
 .topbar{display:flex;align-items:center;gap:12px;margin-bottom:18px}
-.icon-btn{background:#1e222c;border:1px solid #2b313e;color:#b6bcc9;width:38px;height:38px;border-radius:11px;font-size:16px;cursor:pointer;display:flex;align-items:center;justify-content:center;flex:none;font-family:inherit;transition:.18s}
+.icon-btn{background:#1e222c;border:1px solid #2b313e;color:#b6bcc9;width:38px;height:38px;border-radius:11px;font-size:16px;cursor:pointer;display:flex;align-items:center;justify-content:center;flex:none;font-family:inherit}
 .icon-btn:hover{color:#fff;border-color:#4a5468}
 .progress-wrap{flex:1}
 .progress-bar{height:7px;background:#1e222c;border-radius:99px;overflow:hidden}
 .progress-fill{height:100%;width:0;background:linear-gradient(90deg,#4f6bff,#a855f7);border-radius:99px;transition:width .35s}
-.progress-text{font-size:11px;color:#8b93a5;margin-top:5px;text-align:center;letter-spacing:.5px}
+.progress-text{font-size:11px;color:#8b93a5;margin-top:5px;text-align:center}
 .title{flex:1;text-align:center;font-weight:700;font-size:15px}
 .card{background:#171a21;border:1px solid #252a35;border-radius:20px;padding:26px 20px;margin-bottom:16px}
 .word-head{text-align:center;padding-bottom:6px}
@@ -40,7 +41,7 @@ body{font-family:-apple-system,"PingFang SC","Microsoft YaHei",sans-serif;backgr
 .hint{text-align:center;color:#5d6577;font-size:13px;margin-top:24px;padding-top:18px;border-top:1px dashed #252a35}
 .reveal{margin-top:20px;padding-top:20px;border-top:1px solid #252a35}
 .pos-line{margin-bottom:6px}
-.pos{display:inline-block;background:#2a2f45;color:#9fb0ff;font-size:12px;font-weight:700;padding:2px 9px;border-radius:6px;letter-spacing:.5px}
+.pos{display:inline-block;background:#2a2f45;color:#9fb0ff;font-size:12px;font-weight:700;padding:2px 9px;border-radius:6px}
 .zh{font-size:19px;font-weight:600;color:#e8eaed;margin-top:6px}
 .zh div{margin:2px 0}
 .en-def{color:#8b93a5;font-size:13px;margin-top:10px;font-style:italic}
@@ -107,6 +108,7 @@ body{font-family:-apple-system,"PingFang SC","Microsoft YaHei",sans-serif;backgr
 .import-tag.on{background:linear-gradient(135deg,#4f6bff,#7c5cff);border-color:transparent;color:#fff;font-weight:600}
 .import-btn{width:100%;padding:13px;border:none;border-radius:12px;font-size:14px;font-weight:700;background:linear-gradient(135deg,#4f6bff,#7c5cff);color:#fff;cursor:pointer;font-family:inherit}
 .import-status{margin-top:10px;font-size:12.5px;color:#9fb0ff;line-height:1.6;min-height:18px;white-space:pre-wrap}
+.loading-tip{text-align:center;padding:20px;color:#8b93a5;font-size:13px}
 </style>
 </head>
 <body>
@@ -184,45 +186,73 @@ body{font-family:-apple-system,"PingFang SC","Microsoft YaHei",sans-serif;backgr
 <div id="popup" class="popup"></div>
 
 <script>
-/* ========== 示例词库 ========== */
+/* ========== 示例词库（自动加载词库前先显示这些）========== */
 var RAW = [
-["abandon","/əˈbændən/","v. / n.","放弃，抛弃|遗弃，离弃|放纵","to leave somebody or something completely","He abandoned his car in the snow.|他把车丢在雪地里。","abandon oneself to 沉溺于|abandon hope 放弃希望","desert|forsake|quit|give up","keep|retain|maintain","abundant 意为丰富的，与 abandon 拼写相近","abandon oneself to 中 to 是介词","cet6,kaoyan,core,high",95],
-["adapt","/əˈdæpt/","v.","适应|改编，改写","to change your behaviour to suit a new situation","Children adapt quickly to new environments.|孩子们能很快适应新环境。","adapt to 适应|adapt oneself to 使自己适应","adjust|acclimate|modify","","adopt 意为采用、收养，adept 意为熟练的","adapt to 中 to 为介词","cet6,kaoyan,core,high",88],
-["affect","/əˈfekt/","v.","影响|（疾病）侵袭|感动","to have an effect on somebody or something","Smoking seriously affects your health.|吸烟严重影响健康。","be affected by 受……影响","influence|impact|impress","","effect 意为效果、影响（名词），affect 是动词","","cet6,kaoyan,core,high",92],
-["appreciate","/əˈpriːʃieɪt/","v.","感激，感谢|欣赏，赏识|理解","to be grateful for something","I really appreciate your help.|我非常感激你的帮助。","appreciate doing sth 感激做某事","value|treasure|recognize","depreciate|disparage","","appreciate 后接动名词","cet6,kaoyan,core,high",86],
-["assume","/əˈsjuːm/","v.","假定，假设|承担（责任）|呈现","to think that something is true without proof","I assumed that he was coming.|我以为他会来。","assume responsibility 承担责任","presume|suppose|undertake","prove|verify","consume 意为消费，resume 意为恢复","assume 后接 that 从句","cet6,kaoyan,core,high",86],
-["available","/əˈveɪləbl/","adj.","可获得的，可用的|有空的","able to be used or obtained","Tickets are available at the box office.|售票处有票。","be available for 可用于|be available to sb 对某人可用","accessible|obtainable|usable","unavailable|occupied","","","cet6,kaoyan,core,high",90],
-["capable","/ˈkeɪpəbl/","adj.","有能力的，能干的|能够……的","having the ability to do something","She is capable of doing better.|她有能力做得更好。","be capable of 能够","able|competent|qualified","incapable|incompetent|unable","able 强调有能力做，capable 强调具备潜力","be capable of 后接动名词","cet6,kaoyan,core,high",84],
-["consist","/kənˈsɪst/","v.","由……组成|在于","to be made up of","The committee consists of ten members.|委员会由十名成员组成。","consist of 由……组成|consist in 在于","comprise|compose|constitute","","","consist of 不用被动语态","cet6,kaoyan,core,high",83],
-["contribute","/kənˈtrɪbjuːt/","v.","贡献，捐献|促成，导致|投稿","to give something to help","Everyone should contribute to society.|人人都应对社会作贡献。","contribute to 有助于；导致","donate|give|add to","","attribute 归因于，distribute 分配","contribute to 中 to 为介词","cet6,kaoyan,core,high",86],
-["decline","/dɪˈklaɪn/","v. / n.","下降，衰退|婉拒","to become smaller or less","Sales declined sharply last year.|去年销售额急剧下降。","decline to do sth 婉拒做某事|on the decline 在衰退中","decrease|fall|refuse","increase|rise|accept","","decline 表示礼貌拒绝","cet6,kaoyan,core,high",85],
-["deny","/dɪˈnaɪ/","v.","否认，否定|拒绝给予","to say that something is not true","He denied stealing the money.|他否认偷了钱。","deny doing sth 否认做过某事|deny sb sth 拒绝给某人某物","reject|refute|contradict","admit|acknowledge|confirm","","deny 后接动名词","cet6,kaoyan,core,high",85],
-["emerge","/ɪˈmɜːdʒ/","v.","出现，浮现|显露","to come out or appear","New evidence emerged during the trial.|审判期间出现了新证据。","emerge from 从……中出现|emerge as 作为……出现","appear|surface|arise","disappear|vanish|submerge","","","cet6,kaoyan,core,high",84]
+["abandon","/əˈbændən/","v. / n.","放弃，抛弃|遗弃，离弃|放纵","","","abandon oneself to 沉溺于|abandon hope 放弃希望","desert|forsake|quit","keep|retain|maintain","","","cet6,kaoyan,core,high",95],
+["adapt","/əˈdæpt/","v.","适应|改编，改写","","","adapt to 适应|adapt oneself to 使自己适应","adjust|acclimate|modify","","","","cet6,kaoyan,core,high",88],
+["affect","/əˈfekt/","v.","影响|（疾病）侵袭|感动","","","be affected by 受……影响","influence|impact|impress","","","","cet6,kaoyan,core,high",92],
+["appreciate","/əˈpriːʃieɪt/","v.","感激，感谢|欣赏，赏识|理解","","","appreciate doing sth 感激做某事","value|treasure|recognize","depreciate|disparage","","","cet6,kaoyan,core,high",86],
+["assume","/əˈsjuːm/","v.","假定，假设|承担（责任）|呈现","","","assume responsibility 承担责任","presume|suppose|undertake","prove|verify","","","cet6,kaoyan,core,high",86],
+["available","/əˈveɪləbl/","adj.","可获得的，可用的|有空的","","","be available for 可用于","accessible|obtainable|usable","unavailable|occupied","","","cet6,kaoyan,core,high",90],
+["capable","/ˈkeɪpəbl/","adj.","有能力的，能干的|能够……的","","","be capable of 能够","able|competent|qualified","incapable|incompetent","","","cet6,kaoyan,core,high",84],
+["consist","/kənˈsɪst/","v.","由……组成|在于","","","consist of 由……组成","comprise|compose","","","","cet6,kaoyan,core,high",83],
+["contribute","/kənˈtrɪbjuːt/","v.","贡献，捐献|促成，导致","","","contribute to 有助于","donate|give|add to","","","","cet6,kaoyan,core,high",86],
+["decline","/dɪˈklaɪn/","v. / n.","下降，衰退|婉拒","","","decline to do sth 婉拒做某事","decrease|fall|refuse","increase|rise|accept","","","cet6,kaoyan,core,high",85],
+["deny","/dɪˈnaɪ/","v.","否认，否定|拒绝给予","","","deny doing sth 否认做过某事","reject|refute","admit|acknowledge","","","cet6,kaoyan,core,high",85],
+["emerge","/ɪˈmɜːdʒ/","v.","出现，浮现|显露","","","emerge from 从……中出现","appear|surface|arise","disappear|vanish","","","cet6,kaoyan,core,high",84]
 ];
 
 /* ========== 解析 ========== */
 var WORDS = [];
 var WORD_MAP = {};
-for (var _i = 0; _i < RAW.length; _i++) {
-  var a = RAW[_i];
-  var o = {
-    word: a[0],
-    ph: a[1] || '',
-    pos: a[2] || '',
-    zh: a[3] ? a[3].split('|') : [],
-    en: a[4] || '',
-    exEn: a[5] ? a[5].split('|')[0] : '',
-    exZh: (a[5] && a[5].indexOf('|') >= 0) ? a[5].split('|')[1] : '',
-    col: a[6] ? a[6].split('|') : [],
-    syn: a[7] ? a[7].split('|') : [],
-    ant: a[8] ? a[8].split('|') : [],
-    conf: a[9] ? a[9].split('|') : [],
-    gram: a[10] || '',
-    tags: a[11] ? a[11].split(',') : [],
-    freq: a[12] || 50
-  };
+
+function addWord(o) {
+  if (!o || !o.word) return false;
+  var idx = -1;
+  for (var i = 0; i < WORDS.length; i++) {
+    if (WORDS[i].word === o.word) { idx = i; break; }
+  }
+  if (idx >= 0) WORDS.splice(idx, 1);
   WORDS.push(o);
   WORD_MAP[o.word] = o;
+  return true;
+}
+
+function parseItem(item) {
+  if (Array.isArray(item)) {
+    return {
+      word: item[0],
+      ph: item[1] || '',
+      pos: item[2] || '',
+      zh: item[3] ? String(item[3]).split('|') : [],
+      en: item[4] || '',
+      exEn: item[5] ? String(item[5]).split('|')[0] : '',
+      exZh: (item[5] && String(item[5]).indexOf('|') >= 0) ? String(item[5]).split('|')[1] : '',
+      col: item[6] ? String(item[6]).split('|') : [],
+      syn: item[7] ? String(item[7]).split('|') : [],
+      ant: item[8] ? String(item[8]).split('|') : [],
+      conf: item[9] ? String(item[9]).split('|') : [],
+      gram: item[10] || '',
+      tags: item[11] ? String(item[11]).split(',') : [],
+      freq: item[12] || 50
+    };
+  }
+  return {
+    word: item.word || item.headWord || '',
+    ph: item.ph || item.phonetic || '',
+    pos: item.pos || '',
+    zh: Array.isArray(item.zh) ? item.zh : (item.translation ? String(item.translation).split('|') : []),
+    en: item.en || item.definition || '',
+    exEn: item.exEn || item.example || '',
+    exZh: item.exZh || '',
+    col: item.col || [], syn: item.syn || [], ant: item.ant || [],
+    conf: item.conf || [], gram: item.gram || '',
+    tags: item.tags || [], freq: item.freq || 50
+  };
+}
+
+for (var _i = 0; _i < RAW.length; _i++) {
+  addWord(parseItem(RAW[_i]));
 }
 
 var BOOKS = {
@@ -234,38 +264,25 @@ var BOOKS = {
   unknown:  { name: '我的生词本',   fn: null }
 };
 
-/* ========== 安全读取 localStorage ========== */
+/* ========== 安全存储 ========== */
 function safeParse(key, fallback) {
   try {
     var v = localStorage.getItem(key);
     if (!v) return fallback;
     var r = JSON.parse(v);
     return r || fallback;
-  } catch (e) {
-    return fallback;
-  }
+  } catch (e) { return fallback; }
 }
 function safeSave(key, val) {
-  try {
-    localStorage.setItem(key, JSON.stringify(val));
-    return true;
-  } catch (e) {
-    return false;
-  }
+  try { localStorage.setItem(key, JSON.stringify(val)); return true; }
+  catch (e) { return false; }
 }
 
 /* ========== 状态 ========== */
 var S = {
-  book: 'all',
-  order: 'random',
-  size: 20,
-  queue: [],
-  total: 0,
-  mastered: 0,
-  cur: null,
-  revealed: false,
-  finished: false,
-  newUnknown: 0,
+  book: 'all', order: 'random', size: 20,
+  queue: [], total: 0, mastered: 0, cur: null,
+  revealed: false, finished: false, newUnknown: 0,
   history: [],
   unknown: safeParse('vocab_unknown', [])
 };
@@ -599,7 +616,7 @@ function renderNote() {
     html += '<div class="note-word">' + o.word + '</div>';
     html += '<div class="note-zh">' + (o.pos || '') + ' ' + (o.zh.join('；') || '') + '</div>';
     html += '</div>';
-    html += '<button class="icon-btn" data-act="speak-note" data-w="' + o.word + '">🔊</button>';
+    html += '<button class="icon-btn" data-act="speak-note" data-w="' + o.word + '">&#128266;</button>';
     html += '<button class="icon-btn" data-act="del-note" data-w="' + o.word + '">X</button>';
     html += '</div>';
   }
@@ -778,10 +795,7 @@ function importCSV(text) {
     var iW = col('word'), iP = col('phonetic'), iT = col('translation'),
         iPo = col('pos'), iTag = col('tag'), iFrq = col('frq'), iColl = col('collins');
 
-    if (iW < 0 || iTag < 0) {
-      statusEl.textContent = 'CSV 缺少 word 或 tag 列';
-      return;
-    }
+    if (iW < 0 || iTag < 0) { statusEl.textContent = 'CSV 缺少 word 或 tag 列'; return; }
 
     var posMap = { n:'n.', v:'v.', adj:'adj.', adv:'adv.', prep:'prep.', conj:'conj.',
                    pron:'pron.', num:'num.', art:'art.', int:'int.', aux:'aux.',
@@ -831,20 +845,13 @@ function importCSV(text) {
       if (frqRaw > 0 && frqRaw < 8000) tags.push('high');
       var freq = frqRaw > 0 ? Math.max(1, Math.min(100, Math.round(100 - Math.log10(frqRaw + 1) * 18))) : 50;
 
-      var w = {
+      addWord({
         word: word, ph: ph, pos: pos,
         zh: zh ? zh.split('|') : [],
         en: '', exEn: '', exZh: '',
         col: [], syn: [], ant: [], conf: [],
         gram: '', tags: tags, freq: freq
-      };
-      var idx = -1;
-      for (var wi = 0; wi < WORDS.length; wi++) {
-        if (WORDS[wi].word === w.word) { idx = wi; break; }
-      }
-      if (idx >= 0) WORDS.splice(idx, 1);
-      WORDS.push(w);
-      WORD_MAP[w.word] = w;
+      });
       added++;
     }
 
@@ -862,46 +869,8 @@ function importJSON(text) {
     if (!Array.isArray(data)) { statusEl.textContent = 'JSON 不是数组'; return; }
     var added = 0;
     for (var i = 0; i < data.length; i++) {
-      var item = data[i];
-      var o;
-      if (Array.isArray(item)) {
-        o = {
-          word: item[0], ph: item[1] || '', pos: item[2] || '',
-          zh: item[3] ? String(item[3]).split('|') : [],
-          en: item[4] || '',
-          exEn: item[5] ? String(item[5]).split('|')[0] : '',
-          exZh: (item[5] && String(item[5]).indexOf('|') >= 0) ? String(item[5]).split('|')[1] : '',
-          col: item[6] ? String(item[6]).split('|') : [],
-          syn: item[7] ? String(item[7]).split('|') : [],
-          ant: item[8] ? String(item[8]).split('|') : [],
-          conf: item[9] ? String(item[9]).split('|') : [],
-          gram: item[10] || '',
-          tags: item[11] ? String(item[11]).split(',') : ['imported'],
-          freq: item[12] || 50
-        };
-      } else {
-        o = {
-          word: item.word || item.headWord,
-          ph: item.ph || item.phonetic || '',
-          pos: item.pos || '',
-          zh: Array.isArray(item.zh) ? item.zh : (item.translation ? String(item.translation).split('|') : []),
-          en: item.en || item.definition || '',
-          exEn: item.exEn || item.example || '',
-          exZh: item.exZh || '',
-          col: item.col || [], syn: item.syn || [], ant: item.ant || [],
-          conf: item.conf || [], gram: item.gram || '',
-          tags: item.tags || ['imported'], freq: item.freq || 50
-        };
-      }
-      if (!o.word) continue;
-      var idx = -1;
-      for (var j = 0; j < WORDS.length; j++) {
-        if (WORDS[j].word === o.word) { idx = j; break; }
-      }
-      if (idx >= 0) WORDS.splice(idx, 1);
-      WORDS.push(o);
-      WORD_MAP[o.word] = o;
-      added++;
+      var o = parseItem(data[i]);
+      if (o.word) { addWord(o); added++; }
     }
     saveImportedWords();
     statusEl.textContent = 'JSON 导入完成，新增 ' + added + ' 个';
@@ -939,7 +908,7 @@ function saveImportedWords() {
       if (!builtin[WORDS[j].word]) extra.push(WORDS[j]);
     }
     safeSave('imported_words_v1', extra);
-  } catch (e) { /* 忽略 */ }
+  } catch (e) {}
 }
 
 function loadImportedWords() {
@@ -948,10 +917,7 @@ function loadImportedWords() {
   for (var i = 0; i < list.length; i++) {
     var w = list[i];
     if (!w || !w.word) continue;
-    if (!WORD_MAP[w.word]) {
-      WORDS.push(w);
-      WORD_MAP[w.word] = w;
-    }
+    if (!WORD_MAP[w.word]) addWord(w);
   }
 }
 
@@ -987,37 +953,30 @@ window.addEventListener('resize', hidePopup);
 loadImportedWords();
 renderHome();
 
-/* 自动从同目录加载 vocab.json */
+/* ========== 自动从同目录加载 vocab.json ========== */
 (function autoLoadVocab() {
+  // 本地 file:// 打开时，fetch 受限，跳过
   if (location.protocol === 'file:') return;
-  fetch('vocab.json')
-    .then(function(r){ return r.ok ? r.json() : null; })
-    .then(function(data){
-      if (!data || !Array.isArray(data)) return;
+
+  var xhr = new XMLHttpRequest();
+  xhr.open('GET', 'vocab.json?_=' + Date.now(), true);
+  xhr.onreadystatechange = function () {
+    if (xhr.readyState !== 4) return;
+    if (xhr.status !== 200) {
+      console.log('未找到 vocab.json，使用本地词库');
+      return;
+    }
+    try {
+      var data = JSON.parse(xhr.responseText);
+      if (!Array.isArray(data)) {
+        console.log('vocab.json 不是数组');
+        return;
+      }
       var added = 0;
       for (var i = 0; i < data.length; i++) {
-        var item = data[i], o;
-        if (Array.isArray(item)) {
-          o = {
-            word: item[0], ph: item[1]||'', pos: item[2]||'',
-            zh: item[3] ? String(item[3]).split('|') : [],
-            en: item[4]||'',
-            exEn: item[5] ? String(item[5]).split('|')[0] : '',
-            exZh: (item[5] && String(item[5]).indexOf('|')>=0) ? String(item[5]).split('|')[1] : '',
-            col: item[6] ? String(item[6]).split('|') : [],
-            syn: item[7] ? String(item[7]).split('|') : [],
-            ant: item[8] ? String(item[8]).split('|') : [],
-            conf: item[9] ? String(item[9]).split('|') : [],
-            gram: item[10]||'',
-            tags: item[11] ? String(item[11]).split(',') : [],
-            freq: item[12]||50
-          };
-        } else {
-          o = item;
-        }
-        if (o && o.word && !WORD_MAP[o.word]) {
-          WORDS.push(o);
-          WORD_MAP[o.word] = o;
+        var o = parseItem(data[i]);
+        if (o.word && !WORD_MAP[o.word]) {
+          addWord(o);
           added++;
         }
       }
@@ -1025,8 +984,11 @@ renderHome();
         renderHome();
         console.log('自动加载词库：' + added + ' 个');
       }
-    })
-    .catch(function(e){ console.log('未找到 vocab.json，跳过自动加载'); });
+    } catch (e) {
+      console.log('vocab.json 解析失败：', e);
+    }
+  };
+  xhr.send();
 })();
 </script>
 </body>
