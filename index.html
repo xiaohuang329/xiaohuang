@@ -72,8 +72,8 @@ body{font-family:-apple-system,"PingFang SC","Microsoft YaHei",sans-serif;backgr
 .spk-mini{background:transparent;border:1px solid #2b313e;color:#8b93a5;font-size:11px;padding:4px 11px;border-radius:8px;margin-top:10px;cursor:pointer;font-family:inherit}
 .spk-mini:hover{color:#9fb0ff}
 .block{margin-top:16px}
-.block-title{font-size:12px;color:#8b93a5;margin-bottom:8px;font-weight:600}
-.col-list{list-style:none;display:flex;flex-direction:column;gap:6px}
+.block-title{font-size:6012px;color:#8b93a5px;margin-bottom:8px;font-weight 0:600}
+.col;-list{list-style:none;display:fontflex;flex-direction:column;gap:6px}
 .col-list li{background:#12151b;border-radius:9px;padding:9px 13px;font-size:13.5px;color:#c3cad9}
 .gram{background:#2a2410;border:1px solid #4a3d15;color:#ffd77a;border-radius:11px;padding:11px 14px;font-size:13px;margin-top:14px}
 .fold{background:#12151b;border:1px solid #232833;border-radius:12px;margin-top:10px;overflow:hidden}
@@ -105,7 +105,7 @@ body{font-family:-apple-system,"PingFang SC","Microsoft YaHei",sans-serif;backgr
 .note-main{flex:1;min-width:0}
 .note-word{font-size:17px;font-weight:700;color:#e8eaed}
 .note-zh{font-size:12.5px;color:#8b93a5;margin-top:2px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
-.empty{text-align:center;color:#5d6577;padding:60px 0;font-size:14px}
+.empty{text-align:center;color:#5d6577;padding:-size:14px}
 .toast{position:fixed;left:50%;bottom:80px;transform:translateX(-50%) translateY(20px);background:rgba(30,34,44,.97);color:#e8eaed;padding:11px 22px;border-radius:12px;font-size:14px;font-weight:600;box-shadow:0 8px 28px rgba(0,0,0,.5);border:1px solid #343b4a;opacity:0;pointer-events:none;transition:.25s;z-index:10000;white-space:nowrap}
 .toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
 .clickable{cursor:pointer}
@@ -223,6 +223,7 @@ var RAW = [
 var WORDS = [];
 var WORD_MAP = {};
 var FORMS_MAP = {};
+var DM_CACHE = {};
 
 function addWord(o){
   if(!o||!o.word)return false;
@@ -302,6 +303,85 @@ function safeSave(key,val){
     localStorage.setItem(key,JSON.stringify(val));
     return true;
   }catch(e){return false;}
+}
+
+/* ===== Datamuse 联网查同义词反义词 ===== */
+function fetchSynAnt(word,cb){
+  var key=word.toLowerCase();
+  if(DM_CACHE[key]){cb(DM_CACHE[key]);return;}
+  try{
+    var c=localStorage.getItem("dm_"+key);
+    if(c){
+      var d=JSON.parse(c);
+      DM_CACHE[key]=d;
+      cb(d);
+      return;
+    }
+  }catch(e){}
+
+  var result={syn:[],ant:[]};
+  var pending=2;
+
+  function done(){
+    pending--;
+    if(pending>0)return;
+    DM_CACHE[key]=result;
+    try{localStorage.setItem("dm_"+key,JSON.stringify(result));}catch(e){}
+    cb(result);
+  }
+
+  var x1=new XMLHttpRequest();
+  x1.open("GET","https://api.datamuse.com/words?rel_syn="+encodeURIComponent(word)+"&max=8",true);
+  x1.onreadystatechange=function(){
+    if(x1.readyState!==4)return;
+    if(x1.status===200){
+      try{
+        var arr=JSON.parse(x1.responseText);
+        for(var i=0;i<arr.length;i++){
+          if(arr[i].word&&arr[i].word.length<25)result.syn.push(arr[i].word);
+        }
+      }catch(e){}
+    }
+    done();
+  };
+  x1.onerror=done;
+  x1.ontimeout=done;
+  x1.timeout=8000;
+  x1.send();
+
+  var x2=new XMLHttpRequest();
+  x2.open("GET","https://api.datamuse.com/words?rel_ant="+encodeURIComponent(word)+"&max=6",true);
+  x2.onreadystatechange=function(){
+    if(x2.readyState!==4)return;
+    if(x2.status===200){
+      try{
+        var arr2=JSON.parse(x2.responseText);
+        for(var j=0;j<arr2.length;j++){
+          if(arr2[j].word&&arr2[j].word.length<25)result.ant.push(arr2[j].word);
+        }
+      }catch(e){}
+    }
+    done();
+  };
+  x2.onerror=done;
+  x2.ontimeout=done;
+  x2.timeout=8000;
+  x2.send();
+}
+
+function enrichCurrentWithDM(){
+  if(!S.revealed||!S.cur||S.finished)return;
+  var w=S.cur;
+  if(w._dmFetched)return;
+  var needSyn=!w.syn||!w.syn.length;
+  var needAnt=!w.ant||!w.ant.length;
+  if(!needSyn&&!needAnt)return;
+  w._dmFetched=true;
+  fetchSynAnt(w.word,function(data){
+    if(data.syn&&data.syn.length&&(!w.syn||!w.syn.length))w.syn=data.syn;
+    if(data.ant&&data.ant.length&&(!w.ant||!w.ant.length))w.ant=data.ant;
+    if(S.cur&&S.cur.word===w.word&&S.revealed&&!S.finished)renderCard();
+  });
 }
 
 var S = {
@@ -673,6 +753,8 @@ function renderCard(){
         out+='</div></div>';
       }
       out+='</div></div>';
+    }else{
+      out+='<div class="fold"><button class="fold-btn" data-act="fold">同义词 / 反义词</button><div class="fold-body"><div style="color:#5d6577;font-size:12.5px">正在查询…</div></div></div>';
     }
 
     if(w.conf&&w.conf.length){
@@ -699,6 +781,7 @@ function renderCard(){
     out+='</div>';
   }
   area.innerHTML=out;
+  enrichCurrentWithDM();
 }
 
 function renderNote(){
