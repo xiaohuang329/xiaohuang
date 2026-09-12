@@ -21,8 +21,8 @@ body{font-family:-apple-system,"PingFang SC","Microsoft YaHei",sans-serif;backgr
 .chip.on{background:linear-gradient(135deg,#4f6bff,#7c5cff);border-color:transparent;color:#fff;font-weight:600}
 .btn-primary{width:100%;padding:16px;border:none;border-radius:14px;font-size:16px;font-weight:700;background:linear-gradient(135deg,#4f6bff,#7c5cff);color:#fff;cursor:pointer;font-family:inherit;box-shadow:0 8px 24px rgba(90,110,255,.28);transition:.2s}
 .btn-primary:active{transform:scale(.98)}
-.row-links{display:flex;gap:10px;margin-top:14px}
-.link{flex:1;background:#171a21;border:1px solid #252a35;color:#9aa3b5;border-radius:12px;padding:12px;font-size:13px;cursor:pointer;font-family:inherit;transition:.18s}
+.row-links{display:flex;gap:8px;margin-top:14px;flex-wrap:wrap}
+.link{flex:1;min-width:100px;background:#171a21;border:1px solid #252a35;color:#9aa3b5;border-radius:12px;padding:12px;font-size:12.5px;cursor:pointer;font-family:inherit;transition:.18s}
 .link:hover{color:#e8eaed;border-color:#3d4557}
 .topbar{display:flex;align-items:center;gap:12px;margin-bottom:18px}
 .icon-btn{background:#1e222c;border:1px solid #2b313e;color:#b6bcc9;width:38px;height:38px;border-radius:11px;font-size:16px;cursor:pointer;display:flex;align-items:center;justify-content:center;flex:none;font-family:inherit}
@@ -45,6 +45,12 @@ body{font-family:-apple-system,"PingFang SC","Microsoft YaHei",sans-serif;backgr
 .zh{font-size:19px;font-weight:600;color:#e8eaed;margin-top:6px}
 .zh div{margin:2px 0}
 .en-def{color:#8b93a5;font-size:13px;margin-top:10px;font-style:italic}
+.forms{background:#12151b;border:1px solid #232833;border-radius:12px;padding:12px 14px;margin-top:14px}
+.forms-title{font-size:11px;color:#8b93a5;font-weight:700;letter-spacing:.5px;margin-bottom:8px}
+.forms-list{display:flex;flex-wrap:wrap;gap:8px}
+.form-item{background:#1e222c;border:1px solid #2b313e;border-radius:8px;padding:5px 11px;font-size:13px}
+.form-item b{color:#7f879a;font-weight:500;margin-right:5px}
+.form-item span{color:#c3cad9}
 .example{background:#12151b;border-left:3px solid #4f6bff;border-radius:0 12px 12px 0;padding:14px 16px;margin-top:16px}
 .ex-en{color:#dbe2f0;font-size:15px;line-height:1.6}
 .ex-zh{color:#7f879a;font-size:13px;margin-top:6px}
@@ -67,7 +73,6 @@ body{font-family:-apple-system,"PingFang SC","Microsoft YaHei",sans-serif;backgr
 .tag.ant{color:#ff9f9f}
 .conf-item{padding:9px 0;border-bottom:1px dashed #232833}
 .conf-item:last-child{border-bottom:none}
-.loading-bar{background:#12151b;border-radius:8px;padding:8px 12px;font-size:12px;color:#5d6577;text-align:center;margin-top:8px}
 .actions{display:flex;gap:10px}
 .btn-rate{flex:1;padding:17px 6px;border:none;border-radius:14px;font-size:15px;font-weight:700;cursor:pointer;font-family:inherit;color:#fff}
 .btn-rate:active{transform:scale(.97)}
@@ -143,10 +148,13 @@ body{font-family:-apple-system,"PingFang SC","Microsoft YaHei",sans-serif;backgr
   </div>
   <button class="btn-primary" id="btnStart">开始背诵</button>
   <div class="row-links">
-    <button class="link" id="btnNote">生词本（<span id="noteCount">0</span>）</button>
+    <button class="link" id="btnNote">生词本<span id="noteCount"> 0</span></button>
+    <button class="link" id="btnForms">补全单词用法</button>
+    <button class="link" id="btnExportForms">导出词形数据</button>
     <button class="link" id="btnImportToggle">导入完整词库</button>
   </div>
   <input type="file" id="fileInput" accept=".json,.txt,.csv" hidden>
+  <input type="file" id="formsFileInput" accept=".csv" hidden>
   <div class="import-panel" id="importPanel" style="display:none">
     <div class="import-title">导入 ECDICT 词库</div>
     <div class="import-desc">选好要保留的词库标签，然后选 ecdict.mini.csv 或 ecdict.csv。</div>
@@ -186,7 +194,6 @@ body{font-family:-apple-system,"PingFang SC","Microsoft YaHei",sans-serif;backgr
 <div id="popup" class="popup"></div>
 
 <script>
-/* ========== 示例词库 ========== */
 var RAW = [
 ["abandon","/əˈbændən/","v. / n.","放弃，抛弃|遗弃，离弃|放纵","","","","desert|forsake|quit","keep|retain|maintain","","","cet6,kaoyan,core,high",95],
 ["adapt","/əˈdæpt/","v.","适应|改编，改写","","","","adjust|acclimate|modify","","","","cet6,kaoyan,core,high",88],
@@ -202,9 +209,9 @@ var RAW = [
 ["emerge","/ɪˈmɜːdʒ/","v.","出现，浮现|显露","","","","appear|surface|arise","disappear|vanish","","","cet6,kaoyan,core,high",84]
 ];
 
-/* ========== 解析 ========== */
 var WORDS = [];
 var WORD_MAP = {};
+var FORMS_MAP = {};
 
 function addWord(o) {
   if (!o || !o.word) return false;
@@ -251,9 +258,7 @@ function parseItem(item) {
   };
 }
 
-for (var _i = 0; _i < RAW.length; _i++) {
-  addWord(parseItem(RAW[_i]));
-}
+for (var _i = 0; _i < RAW.length; _i++) addWord(parseItem(RAW[_i]));
 
 var BOOKS = {
   all:      { name: '全部词库',     fn: null },
@@ -285,7 +290,6 @@ var S = {
   unknown: safeParse('vocab_unknown', [])
 };
 
-/* ========== 发音 ========== */
 var voice = null;
 function pickVoice() {
   if (!window.speechSynthesis) return;
@@ -330,7 +334,6 @@ function show(id) {
   window.scrollTo(0, 0);
 }
 
-/* ========== 首页 ========== */
 function renderHome() {
   var bc = document.getElementById('bookChips');
   var html = '';
@@ -344,7 +347,7 @@ function renderHome() {
     html += '<button class="' + cls + '" data-book="' + k + '">' + BOOKS[k].name + ' ' + n + '</button>';
   }
   bc.innerHTML = html;
-  document.getElementById('noteCount').textContent = S.unknown.length;
+  document.getElementById('noteCount').textContent = ' ' + S.unknown.length;
 
   var bks = bc.querySelectorAll('[data-book]');
   for (var i = 0; i < bks.length; i++) {
@@ -362,7 +365,6 @@ function renderHome() {
   }
 }
 
-/* ========== 学习 ========== */
 function getBookList() {
   if (S.book === 'unknown') {
     var arr = [];
@@ -483,106 +485,29 @@ function showToast(msg) {
   t.textContent = msg;
   t.classList.add('show');
   if (t._timer) clearTimeout(t._timer);
-  t._timer = setTimeout(function () { t.classList.remove('show'); }, 1500);
+  t._timer = setTimeout(function () { t.classList.remove('show'); }, 1800);
 }
 
-/* ========== 单词补全（同义词/反义词/例句/搭配） ========== */
-var ENRICH_CACHE = {};
-
-function enrichWord(w) {
-  if (!w || w._enriching || w._enriched) return;
-  var key = w.word.toLowerCase();
-
-  if (ENRICH_CACHE[key]) {
-    applyEnrich(w, ENRICH_CACHE[key]);
-    return;
+function renderForms(w) {
+  var f = FORMS_MAP[w.word];
+  if (!f) return '';
+  var items = [];
+  if (f.p) items.push(['过去式', f.p]);
+  if (f.d) items.push(['过去分词', f.d]);
+  if (f.i) items.push(['现在分词', f.i]);
+  if (f['3']) items.push(['三单', f['3']]);
+  if (f.s) items.push(['复数', f.s]);
+  if (f.r) items.push(['比较级', f.r]);
+  if (f.t) items.push(['最高级', f.t]);
+  if (!items.length) return '';
+  var h = '<div class="forms"><div class="forms-title">词形变化</div><div class="forms-list">';
+  for (var i = 0; i < items.length; i++) {
+    h += '<span class="form-item"><b>' + items[i][0] + '</b><span>' + items[i][1] + '</span></span>';
   }
-  try {
-    var c = localStorage.getItem('enrich_' + key);
-    if (c) {
-      var d = JSON.parse(c);
-      ENRICH_CACHE[key] = d;
-      applyEnrich(w, d);
-      return;
-    }
-  } catch (e) {}
-
-  w._enriching = true;
-
-  var xhr = new XMLHttpRequest();
-  xhr.open('GET', 'https://uapis.cn/api/v1/dictionary/lookup?word=' + encodeURIComponent(w.word), true);
-  xhr.timeout = 8000;
-  xhr.onreadystatechange = function () {
-    if (xhr.readyState !== 4) return;
-    w._enriching = false;
-    if (xhr.status !== 200) { w._enriched = true; return; }
-    try {
-      var j = JSON.parse(xhr.responseText);
-      if (!j.found || !j.entry) { w._enriched = true; return; }
-      var data = extractEnrich(j.entry);
-      ENRICH_CACHE[key] = data;
-      try { localStorage.setItem('enrich_' + key, JSON.stringify(data)); } catch (e) {}
-      applyEnrich(w, data);
-    } catch (e) { w._enriched = true; }
-  };
-  xhr.ontimeout = function () { w._enriching = false; w._enriched = true; };
-  xhr.onerror = function () { w._enriching = false; w._enriched = true; };
-  xhr.send();
+  h += '</div></div>';
+  return h;
 }
 
-function extractEnrich(e) {
-  var data = { syn: [], ant: [], col: [], exEn: '', exZh: '' };
-
-  if (Array.isArray(e.synonyms)) {
-    for (var i = 0; i < e.synonyms.length; i++) {
-      var s = e.synonyms[i];
-      if (Array.isArray(s.words)) {
-        for (var j = 0; j < s.words.length; j++) {
-          var wd = s.words[j];
-          if (typeof wd === 'string' && wd.length < 25 && data.syn.length < 8 && data.syn.indexOf(wd) < 0) {
-            data.syn.push(wd);
-          }
-        }
-      }
-    }
-  }
-
-  if (Array.isArray(e.examples) && e.examples.length) {
-    var found = null;
-    for (var k = 0; k < e.examples.length; k++) {
-      var x = e.examples[k];
-      if (x && x.source && x.source.length > 10 && x.source.length < 150) { found = x; break; }
-    }
-    if (!found) found = e.examples[0];
-    if (found) {
-      data.exEn = found.source || '';
-      data.exZh = found.translation || '';
-    }
-  }
-
-  if (Array.isArray(e.phrases)) {
-    for (var p = 0; p < e.phrases.length && data.col.length < 6; p++) {
-      var ph = e.phrases[p];
-      if (ph.phrase && ph.meaning) data.col.push(ph.phrase + '  ' + ph.meaning);
-    }
-  }
-
-  return data;
-}
-
-function applyEnrich(w, data) {
-  if (data.syn && data.syn.length && (!w.syn || !w.syn.length)) w.syn = data.syn;
-  if (data.ant && data.ant.length && (!w.ant || !w.ant.length)) w.ant = data.ant;
-  if (data.col && data.col.length && (!w.col || !w.col.length)) w.col = data.col;
-  if (data.exEn && !w.exEn) w.exEn = data.exEn;
-  if (data.exZh && !w.exZh) w.exZh = data.exZh;
-  w._enriched = true;
-  if (S.cur && S.cur.word === w.word && S.revealed && !S.finished) {
-    renderCard();
-  }
-}
-
-/* ========== 卡片 ========== */
 function renderCard() {
   var area = document.getElementById('cardArea');
   var pct = S.total ? (S.mastered / S.total * 100) : 0;
@@ -623,6 +548,8 @@ function renderCard() {
     for (var i = 0; i < zhArr.length; i++) out += '<div>' + zhArr[i] + '</div>';
     out += '</div>';
     if (w.en) out += '<div class="en-def">' + w.en + '</div>';
+
+    out += renderForms(w);
 
     if (w.exEn) {
       out += '<div class="example">';
@@ -689,18 +616,8 @@ function renderCard() {
   }
 
   area.innerHTML = out;
-
-  // 揭示释义后，如果同义词/例句缺失，自动联网补全
-  if (S.revealed && !S.finished && w) {
-    var needSyn = !w.syn || !w.syn.length;
-    var needEx = !w.exEn;
-    if ((needSyn || needEx) && !w._enriched && !w._enriching) {
-      enrichWord(w);
-    }
-  }
 }
 
-/* ========== 生词本 ========== */
 function renderNote() {
   var box = document.getElementById('noteList');
   if (!S.unknown.length) { box.innerHTML = '<div class="empty">生词本还是空的</div>'; return; }
@@ -720,7 +637,6 @@ function renderNote() {
   box.innerHTML = html;
 }
 
-/* ========== 弹窗 ========== */
 function hidePopup() {
   var p = document.getElementById('popup');
   if (p) { p.classList.remove('show'); p._anchor = null; }
@@ -783,7 +699,6 @@ function jumpToWord(word) {
   nextCard();
 }
 
-/* ========== 事件 ========== */
 document.addEventListener('click', function (e) {
   var target = e.target;
   if (target.closest('[data-pop="close"]')) { hidePopup(); return; }
@@ -830,7 +745,6 @@ document.addEventListener('keydown', function (e) {
   }
 });
 
-/* ========== 导入 ========== */
 var importTags = ['cet6', 'ky'];
 document.getElementById('btnImportToggle').onclick = function () {
   var p = document.getElementById('importPanel');
@@ -976,6 +890,80 @@ document.getElementById('fileInput').onchange = function (ev) {
   ev.target.value = '';
 };
 
+/* ========== 补全单词用法 ========== */
+document.getElementById('btnForms').onclick = function () {
+  document.getElementById('formsFileInput').click();
+};
+
+document.getElementById('formsFileInput').onchange = function (ev) {
+  var f = ev.target.files[0];
+  if (!f) return;
+  if (f.name.toLowerCase().indexOf('.csv') < 0) {
+    alert('请选择 CSV 文件');
+    ev.target.value = '';
+    return;
+  }
+  showToast('正在读取 CSV…（大文件需要 30 秒左右）');
+
+  var rd = new FileReader();
+  rd.onload = function () {
+    setTimeout(function () {
+      try {
+        var rows = parseCSV(rd.result);
+        if (!rows.length) { showToast('文件为空'); return; }
+        var header = rows[0].map(function (s) { return s.trim().toLowerCase().replace(/^\ufeff/, ''); });
+        var iW = header.indexOf('word');
+        var iEx = header.indexOf('exchange');
+        if (iW < 0 || iEx < 0) {
+          showToast('CSV 缺少 word 或 exchange 列');
+          return;
+        }
+        var newForms = {};
+        var added = 0;
+        for (var i = 1; i < rows.length; i++) {
+          var r = rows[i];
+          if (!r || !r[iW] || !r[iEx]) continue;
+          var word = r[iW].trim();
+          if (!word) continue;
+          var ex = r[iEx];
+          var parsed = {};
+          var parts = ex.split('/');
+          for (var x = 0; x < parts.length; x++) {
+            var kv = parts[x].split(':');
+            if (kv.length === 2) parsed[kv[0]] = kv[1];
+          }
+          if (Object.keys(parsed).length) {
+            newForms[word] = parsed;
+            added++;
+          }
+        }
+        FORMS_MAP = newForms;
+        safeSave('word_forms_v1', FORMS_MAP);
+        showToast('已补全 ' + added + ' 个单词的用法');
+        if (S.cur && S.revealed) renderCard();
+      } catch (e) {
+        showToast('解析失败：' + e.message);
+      }
+    }, 30);
+  };
+  rd.readAsText(f, 'UTF-8');
+  ev.target.value = '';
+};
+
+/* ========== 导出词形数据 ========== */
+document.getElementById('btnExportForms').onclick = function () {
+  if (!Object.keys(FORMS_MAP).length) {
+    showToast('还没有数据，先点"补全单词用法"');
+    return;
+  }
+  var blob = new Blob([JSON.stringify(FORMS_MAP)], {type:'application/json'});
+  var a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  a.download = 'forms.json';
+  a.click();
+  showToast('已下载 forms.json，上传到 GitHub 即可共享');
+};
+
 /* ========== 持久化 ========== */
 function saveImportedWords() {
   try {
@@ -1002,7 +990,6 @@ document.addEventListener('visibilitychange', function () {
   if (document.visibilityState === 'hidden') saveImportedWords();
 });
 
-/* ========== 按钮 ========== */
 document.getElementById('btnStart').onclick = startStudy;
 document.getElementById('btnBack').onclick = function () {
   if (window.speechSynthesis) speechSynthesis.cancel();
@@ -1025,10 +1012,11 @@ window.addEventListener('scroll', hidePopup, true);
 window.addEventListener('resize', hidePopup);
 
 /* ========== 初始化 ========== */
+FORMS_MAP = safeParse('word_forms_v1', {});
 loadImportedWords();
 renderHome();
 
-/* ========== 自动加载 vocab.json ========== */
+/* 自动加载 vocab.json */
 (function autoLoadVocab() {
   if (location.protocol === 'file:') return;
   var xhr = new XMLHttpRequest();
@@ -1046,6 +1034,30 @@ renderHome();
       }
       if (added > 0) { renderHome(); console.log('自动加载词库：' + added + ' 个'); }
     } catch (e) { console.log('vocab.json 解析失败', e); }
+  };
+  xhr.send();
+})();
+
+/* 自动加载 forms.json */
+(function autoLoadForms() {
+  if (location.protocol === 'file:') return;
+  var xhr = new XMLHttpRequest();
+  xhr.open('GET', 'forms.json?_=' + Date.now(), true);
+  xhr.onreadystatechange = function () {
+    if (xhr.readyState !== 4) return;
+    if (xhr.status !== 200) { console.log('未找到 forms.json（可以忽略）'); return; }
+    try {
+      var data = JSON.parse(xhr.responseText);
+      if (typeof data !== 'object' || Array.isArray(data)) { console.log('forms.json 格式不对'); return; }
+      var count = 0;
+      for (var k in data) {
+        if (data.hasOwnProperty(k)) { FORMS_MAP[k] = data[k]; count++; }
+      }
+      if (count > 0) {
+        console.log('自动加载词形变化：' + count + ' 个');
+        if (S.cur && S.revealed) renderCard();
+      }
+    } catch (e) { console.log('forms.json 解析失败', e); }
   };
   xhr.send();
 })();
