@@ -67,6 +67,7 @@ body{font-family:-apple-system,"PingFang SC","Microsoft YaHei",sans-serif;backgr
 .tag.ant{color:#ff9f9f}
 .conf-item{padding:9px 0;border-bottom:1px dashed #232833}
 .conf-item:last-child{border-bottom:none}
+.loading-bar{background:#12151b;border-radius:8px;padding:8px 12px;font-size:12px;color:#5d6577;text-align:center;margin-top:8px}
 .actions{display:flex;gap:10px}
 .btn-rate{flex:1;padding:17px 6px;border:none;border-radius:14px;font-size:15px;font-weight:700;cursor:pointer;font-family:inherit;color:#fff}
 .btn-rate:active{transform:scale(.97)}
@@ -108,7 +109,6 @@ body{font-family:-apple-system,"PingFang SC","Microsoft YaHei",sans-serif;backgr
 .import-tag.on{background:linear-gradient(135deg,#4f6bff,#7c5cff);border-color:transparent;color:#fff;font-weight:600}
 .import-btn{width:100%;padding:13px;border:none;border-radius:12px;font-size:14px;font-weight:700;background:linear-gradient(135deg,#4f6bff,#7c5cff);color:#fff;cursor:pointer;font-family:inherit}
 .import-status{margin-top:10px;font-size:12.5px;color:#9fb0ff;line-height:1.6;min-height:18px;white-space:pre-wrap}
-.loading-tip{text-align:center;padding:20px;color:#8b93a5;font-size:13px}
 </style>
 </head>
 <body>
@@ -186,20 +186,20 @@ body{font-family:-apple-system,"PingFang SC","Microsoft YaHei",sans-serif;backgr
 <div id="popup" class="popup"></div>
 
 <script>
-/* ========== 示例词库（自动加载词库前先显示这些）========== */
+/* ========== 示例词库 ========== */
 var RAW = [
-["abandon","/əˈbændən/","v. / n.","放弃，抛弃|遗弃，离弃|放纵","","","abandon oneself to 沉溺于|abandon hope 放弃希望","desert|forsake|quit","keep|retain|maintain","","","cet6,kaoyan,core,high",95],
-["adapt","/əˈdæpt/","v.","适应|改编，改写","","","adapt to 适应|adapt oneself to 使自己适应","adjust|acclimate|modify","","","","cet6,kaoyan,core,high",88],
-["affect","/əˈfekt/","v.","影响|（疾病）侵袭|感动","","","be affected by 受……影响","influence|impact|impress","","","","cet6,kaoyan,core,high",92],
-["appreciate","/əˈpriːʃieɪt/","v.","感激，感谢|欣赏，赏识|理解","","","appreciate doing sth 感激做某事","value|treasure|recognize","depreciate|disparage","","","cet6,kaoyan,core,high",86],
-["assume","/əˈsjuːm/","v.","假定，假设|承担（责任）|呈现","","","assume responsibility 承担责任","presume|suppose|undertake","prove|verify","","","cet6,kaoyan,core,high",86],
-["available","/əˈveɪləbl/","adj.","可获得的，可用的|有空的","","","be available for 可用于","accessible|obtainable|usable","unavailable|occupied","","","cet6,kaoyan,core,high",90],
-["capable","/ˈkeɪpəbl/","adj.","有能力的，能干的|能够……的","","","be capable of 能够","able|competent|qualified","incapable|incompetent","","","cet6,kaoyan,core,high",84],
-["consist","/kənˈsɪst/","v.","由……组成|在于","","","consist of 由……组成","comprise|compose","","","","cet6,kaoyan,core,high",83],
-["contribute","/kənˈtrɪbjuːt/","v.","贡献，捐献|促成，导致","","","contribute to 有助于","donate|give|add to","","","","cet6,kaoyan,core,high",86],
-["decline","/dɪˈklaɪn/","v. / n.","下降，衰退|婉拒","","","decline to do sth 婉拒做某事","decrease|fall|refuse","increase|rise|accept","","","cet6,kaoyan,core,high",85],
-["deny","/dɪˈnaɪ/","v.","否认，否定|拒绝给予","","","deny doing sth 否认做过某事","reject|refute","admit|acknowledge","","","cet6,kaoyan,core,high",85],
-["emerge","/ɪˈmɜːdʒ/","v.","出现，浮现|显露","","","emerge from 从……中出现","appear|surface|arise","disappear|vanish","","","cet6,kaoyan,core,high",84]
+["abandon","/əˈbændən/","v. / n.","放弃，抛弃|遗弃，离弃|放纵","","","","desert|forsake|quit","keep|retain|maintain","","","cet6,kaoyan,core,high",95],
+["adapt","/əˈdæpt/","v.","适应|改编，改写","","","","adjust|acclimate|modify","","","","cet6,kaoyan,core,high",88],
+["affect","/əˈfekt/","v.","影响|（疾病）侵袭|感动","","","","influence|impact|impress","","","","cet6,kaoyan,core,high",92],
+["appreciate","/əˈpriːʃieɪt/","v.","感激，感谢|欣赏，赏识|理解","","","","value|treasure|recognize","depreciate|disparage","","","cet6,kaoyan,core,high",86],
+["assume","/əˈsjuːm/","v.","假定，假设|承担（责任）|呈现","","","","presume|suppose|undertake","prove|verify","","","cet6,kaoyan,core,high",86],
+["available","/əˈveɪləbl/","adj.","可获得的，可用的|有空的","","","","accessible|obtainable|usable","unavailable|occupied","","","cet6,kaoyan,core,high",90],
+["capable","/ˈkeɪpəbl/","adj.","有能力的，能干的|能够……的","","","","able|competent|qualified","incapable|incompetent","","","cet6,kaoyan,core,high",84],
+["consist","/kənˈsɪst/","v.","由……组成|在于","","","","comprise|compose","","","","cet6,kaoyan,core,high",83],
+["contribute","/kənˈtrɪbjuːt/","v.","贡献，捐献|促成，导致","","","","donate|give|add to","","","","cet6,kaoyan,core,high",86],
+["decline","/dɪˈklaɪn/","v. / n.","下降，衰退|婉拒","","","","decrease|fall|refuse","increase|rise|accept","","","cet6,kaoyan,core,high",85],
+["deny","/dɪˈnaɪ/","v.","否认，否定|拒绝给予","","","","reject|refute","admit|acknowledge","","","cet6,kaoyan,core,high",85],
+["emerge","/ɪˈmɜːdʒ/","v.","出现，浮现|显露","","","","appear|surface|arise","disappear|vanish","","","cet6,kaoyan,core,high",84]
 ];
 
 /* ========== 解析 ========== */
@@ -264,7 +264,6 @@ var BOOKS = {
   unknown:  { name: '我的生词本',   fn: null }
 };
 
-/* ========== 安全存储 ========== */
 function safeParse(key, fallback) {
   try {
     var v = localStorage.getItem(key);
@@ -278,7 +277,6 @@ function safeSave(key, val) {
   catch (e) { return false; }
 }
 
-/* ========== 状态 ========== */
 var S = {
   book: 'all', order: 'random', size: 20,
   queue: [], total: 0, mastered: 0, cur: null,
@@ -325,7 +323,6 @@ function speakWordAndExample(w, ex) {
   utter(w, 0.85, function () { if (ex) utter(ex, 0.82); });
 }
 
-/* ========== 页面切换 ========== */
 function show(id) {
   var pages = document.querySelectorAll('.page');
   for (var i = 0; i < pages.length; i++) pages[i].classList.remove('active');
@@ -353,13 +350,11 @@ function renderHome() {
   for (var i = 0; i < bks.length; i++) {
     bks[i].onclick = function () { S.book = this.dataset.book; renderHome(); };
   }
-
   var ocs = document.getElementById('orderChips').querySelectorAll('.chip');
   for (var j = 0; j < ocs.length; j++) {
     ocs[j].classList.toggle('on', ocs[j].dataset.v === S.order);
     ocs[j].onclick = function () { S.order = this.dataset.v; renderHome(); };
   }
-
   var scs = document.getElementById('sizeChips').querySelectorAll('.chip');
   for (var m = 0; m < scs.length; m++) {
     scs[m].classList.toggle('on', +scs[m].dataset.v === S.size);
@@ -451,7 +446,6 @@ function rate(r) {
 function undoLastRating() {
   if (!S.history.length) { showToast('没有可撤销的操作'); return; }
   var h = S.history.pop();
-
   S.queue = h.queueBefore;
   S.mastered = h.masteredBefore;
   S.cur = WORD_MAP[h.word];
@@ -462,7 +456,6 @@ function undoLastRating() {
   }
   S.revealed = false;
   S.finished = false;
-
   var toastMsg = '已撤销，请重新选择';
   if (h.addedToUnknown && !h.wasInUnknown) {
     var newUnknown = [];
@@ -474,7 +467,6 @@ function undoLastRating() {
     if (S.newUnknown > 0) S.newUnknown--;
     toastMsg = '已移出生词本';
   }
-
   renderCard();
   renderHome();
   showToast(toastMsg);
@@ -492,6 +484,102 @@ function showToast(msg) {
   t.classList.add('show');
   if (t._timer) clearTimeout(t._timer);
   t._timer = setTimeout(function () { t.classList.remove('show'); }, 1500);
+}
+
+/* ========== 单词补全（同义词/反义词/例句/搭配） ========== */
+var ENRICH_CACHE = {};
+
+function enrichWord(w) {
+  if (!w || w._enriching || w._enriched) return;
+  var key = w.word.toLowerCase();
+
+  if (ENRICH_CACHE[key]) {
+    applyEnrich(w, ENRICH_CACHE[key]);
+    return;
+  }
+  try {
+    var c = localStorage.getItem('enrich_' + key);
+    if (c) {
+      var d = JSON.parse(c);
+      ENRICH_CACHE[key] = d;
+      applyEnrich(w, d);
+      return;
+    }
+  } catch (e) {}
+
+  w._enriching = true;
+
+  var xhr = new XMLHttpRequest();
+  xhr.open('GET', 'https://uapis.cn/api/v1/dictionary/lookup?word=' + encodeURIComponent(w.word), true);
+  xhr.timeout = 8000;
+  xhr.onreadystatechange = function () {
+    if (xhr.readyState !== 4) return;
+    w._enriching = false;
+    if (xhr.status !== 200) { w._enriched = true; return; }
+    try {
+      var j = JSON.parse(xhr.responseText);
+      if (!j.found || !j.entry) { w._enriched = true; return; }
+      var data = extractEnrich(j.entry);
+      ENRICH_CACHE[key] = data;
+      try { localStorage.setItem('enrich_' + key, JSON.stringify(data)); } catch (e) {}
+      applyEnrich(w, data);
+    } catch (e) { w._enriched = true; }
+  };
+  xhr.ontimeout = function () { w._enriching = false; w._enriched = true; };
+  xhr.onerror = function () { w._enriching = false; w._enriched = true; };
+  xhr.send();
+}
+
+function extractEnrich(e) {
+  var data = { syn: [], ant: [], col: [], exEn: '', exZh: '' };
+
+  if (Array.isArray(e.synonyms)) {
+    for (var i = 0; i < e.synonyms.length; i++) {
+      var s = e.synonyms[i];
+      if (Array.isArray(s.words)) {
+        for (var j = 0; j < s.words.length; j++) {
+          var wd = s.words[j];
+          if (typeof wd === 'string' && wd.length < 25 && data.syn.length < 8 && data.syn.indexOf(wd) < 0) {
+            data.syn.push(wd);
+          }
+        }
+      }
+    }
+  }
+
+  if (Array.isArray(e.examples) && e.examples.length) {
+    var found = null;
+    for (var k = 0; k < e.examples.length; k++) {
+      var x = e.examples[k];
+      if (x && x.source && x.source.length > 10 && x.source.length < 150) { found = x; break; }
+    }
+    if (!found) found = e.examples[0];
+    if (found) {
+      data.exEn = found.source || '';
+      data.exZh = found.translation || '';
+    }
+  }
+
+  if (Array.isArray(e.phrases)) {
+    for (var p = 0; p < e.phrases.length && data.col.length < 6; p++) {
+      var ph = e.phrases[p];
+      if (ph.phrase && ph.meaning) data.col.push(ph.phrase + '  ' + ph.meaning);
+    }
+  }
+
+  return data;
+}
+
+function applyEnrich(w, data) {
+  if (data.syn && data.syn.length && (!w.syn || !w.syn.length)) w.syn = data.syn;
+  if (data.ant && data.ant.length && (!w.ant || !w.ant.length)) w.ant = data.ant;
+  if (data.col && data.col.length && (!w.col || !w.col.length)) w.col = data.col;
+  if (data.exEn && !w.exEn) w.exEn = data.exEn;
+  if (data.exZh && !w.exZh) w.exZh = data.exZh;
+  w._enriched = true;
+  if (S.cur && S.cur.word === w.word && S.revealed && !S.finished) {
+    renderCard();
+  }
 }
 
 /* ========== 卡片 ========== */
@@ -601,6 +689,15 @@ function renderCard() {
   }
 
   area.innerHTML = out;
+
+  // 揭示释义后，如果同义词/例句缺失，自动联网补全
+  if (S.revealed && !S.finished && w) {
+    var needSyn = !w.syn || !w.syn.length;
+    var needEx = !w.exEn;
+    if ((needSyn || needEx) && !w._enriched && !w._enriching) {
+      enrichWord(w);
+    }
+  }
 }
 
 /* ========== 生词本 ========== */
@@ -689,15 +786,11 @@ function jumpToWord(word) {
 /* ========== 事件 ========== */
 document.addEventListener('click', function (e) {
   var target = e.target;
-
   if (target.closest('[data-pop="close"]')) { hidePopup(); return; }
-
   var jumpEl = target.closest('[data-jump]');
   if (jumpEl) { jumpToWord(jumpEl.dataset.jump); return; }
-
   var lookEl = target.closest('[data-lookup]');
   if (lookEl) { e.stopPropagation(); openPopup(lookEl); return; }
-
   var el = target.closest('[data-act]');
   if (el) {
     var act = el.dataset.act;
@@ -720,7 +813,6 @@ document.addEventListener('click', function (e) {
     }
     return;
   }
-
   var popup = document.getElementById('popup');
   if (popup && popup.classList.contains('show')) hidePopup();
 });
@@ -740,12 +832,10 @@ document.addEventListener('keydown', function (e) {
 
 /* ========== 导入 ========== */
 var importTags = ['cet6', 'ky'];
-
 document.getElementById('btnImportToggle').onclick = function () {
   var p = document.getElementById('importPanel');
   p.style.display = p.style.display === 'none' ? 'block' : 'none';
 };
-
 var impTagBtns = document.getElementById('importTags').querySelectorAll('.import-tag');
 for (var it = 0; it < impTagBtns.length; it++) {
   impTagBtns[it].onclick = function () {
@@ -755,7 +845,6 @@ for (var it = 0; it < impTagBtns.length; it++) {
     for (var k = 0; k < onList.length; k++) importTags.push(onList[k].dataset.tag);
   };
 }
-
 document.getElementById('btnPickCSV').onclick = function () {
   document.getElementById('fileInput').click();
 };
@@ -789,20 +878,16 @@ function importCSV(text) {
     try { rows = parseCSV(text); }
     catch (e) { statusEl.textContent = '解析失败: ' + e.message; return; }
     if (!rows.length) { statusEl.textContent = '文件为空'; return; }
-
     var header = rows[0].map(function (s) { return s.trim().toLowerCase().replace(/^\ufeff/, ''); });
     function col(n) { return header.indexOf(n); }
     var iW = col('word'), iP = col('phonetic'), iT = col('translation'),
         iPo = col('pos'), iTag = col('tag'), iFrq = col('frq'), iColl = col('collins');
-
     if (iW < 0 || iTag < 0) { statusEl.textContent = 'CSV 缺少 word 或 tag 列'; return; }
-
     var posMap = { n:'n.', v:'v.', adj:'adj.', adv:'adv.', prep:'prep.', conj:'conj.',
                    pron:'pron.', num:'num.', art:'art.', int:'int.', aux:'aux.',
                    abbr:'abbr.', vt:'vt.', vi:'vi.' };
     var tagMap = { cet6:'cet6', ky:'kaoyan', cet4:'cet4', toefl:'toefl', ielts:'ielts' };
     var added = 0, skipped = 0, total = 0;
-
     for (var i = 1; i < rows.length; i++) {
       var r = rows[i];
       if (!r || !r[iW]) continue;
@@ -813,16 +898,12 @@ function importCSV(text) {
         if (tagArr.indexOf(importTags[t]) >= 0) { hit = true; break; }
       }
       if (!hit) { skipped++; continue; }
-
       var word = r[iW].trim();
       if (!word || /\s/.test(word)) { skipped++; continue; }
-
       var ph = (r[iP] || '').trim();
       if (ph && ph.indexOf('/') !== 0) ph = '/' + ph.replace(/^\/|\/$/g, '') + '/';
-
       var zh = (r[iT] || '').replace(/\\n/g, '|').replace(/\r?\n/g, '|')
         .replace(/\|+/g, '|').replace(/^\||\|$/g, '').trim();
-
       var pos = '';
       var rawPos = (r[iPo] || '').trim();
       if (rawPos) {
@@ -834,7 +915,6 @@ function importCSV(text) {
         }
         pos = posArr.join(' / ');
       }
-
       var tags = [];
       for (var ta = 0; ta < tagArr.length; ta++) {
         if (tagMap[tagArr[ta]]) tags.push(tagMap[tagArr[ta]]);
@@ -844,7 +924,6 @@ function importCSV(text) {
       var frqRaw = +r[iFrq] || 0;
       if (frqRaw > 0 && frqRaw < 8000) tags.push('high');
       var freq = frqRaw > 0 ? Math.max(1, Math.min(100, Math.round(100 - Math.log10(frqRaw + 1) * 18))) : 50;
-
       addWord({
         word: word, ph: ph, pos: pos,
         zh: zh ? zh.split('|') : [],
@@ -854,7 +933,6 @@ function importCSV(text) {
       });
       added++;
     }
-
     saveImportedWords();
     statusEl.textContent = '导入完成！新增 ' + added + ' 个，跳过 ' + skipped + ' 个';
     renderHome();
@@ -910,7 +988,6 @@ function saveImportedWords() {
     safeSave('imported_words_v1', extra);
   } catch (e) {}
 }
-
 function loadImportedWords() {
   var list = safeParse('imported_words_v1', []);
   if (!Array.isArray(list)) return;
@@ -920,7 +997,6 @@ function loadImportedWords() {
     if (!WORD_MAP[w.word]) addWord(w);
   }
 }
-
 window.addEventListener('beforeunload', saveImportedWords);
 document.addEventListener('visibilitychange', function () {
   if (document.visibilityState === 'hidden') saveImportedWords();
@@ -945,7 +1021,6 @@ document.getElementById('btnClearNote').onclick = function () {
     renderNote(); renderHome();
   }
 };
-
 window.addEventListener('scroll', hidePopup, true);
 window.addEventListener('resize', hidePopup);
 
@@ -953,40 +1028,24 @@ window.addEventListener('resize', hidePopup);
 loadImportedWords();
 renderHome();
 
-/* ========== 自动从同目录加载 vocab.json ========== */
+/* ========== 自动加载 vocab.json ========== */
 (function autoLoadVocab() {
-  // 本地 file:// 打开时，fetch 受限，跳过
   if (location.protocol === 'file:') return;
-
   var xhr = new XMLHttpRequest();
   xhr.open('GET', 'vocab.json?_=' + Date.now(), true);
   xhr.onreadystatechange = function () {
     if (xhr.readyState !== 4) return;
-    if (xhr.status !== 200) {
-      console.log('未找到 vocab.json，使用本地词库');
-      return;
-    }
+    if (xhr.status !== 200) { console.log('未找到 vocab.json'); return; }
     try {
       var data = JSON.parse(xhr.responseText);
-      if (!Array.isArray(data)) {
-        console.log('vocab.json 不是数组');
-        return;
-      }
+      if (!Array.isArray(data)) { console.log('vocab.json 不是数组'); return; }
       var added = 0;
       for (var i = 0; i < data.length; i++) {
         var o = parseItem(data[i]);
-        if (o.word && !WORD_MAP[o.word]) {
-          addWord(o);
-          added++;
-        }
+        if (o.word && !WORD_MAP[o.word]) { addWord(o); added++; }
       }
-      if (added > 0) {
-        renderHome();
-        console.log('自动加载词库：' + added + ' 个');
-      }
-    } catch (e) {
-      console.log('vocab.json 解析失败：', e);
-    }
+      if (added > 0) { renderHome(); console.log('自动加载词库：' + added + ' 个'); }
+    } catch (e) { console.log('vocab.json 解析失败', e); }
   };
   xhr.send();
 })();
