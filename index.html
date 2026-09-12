@@ -986,6 +986,48 @@ window.addEventListener('resize', hidePopup);
 /* ========== 初始化 ========== */
 loadImportedWords();
 renderHome();
+
+/* 自动从同目录加载 vocab.json */
+(function autoLoadVocab() {
+  if (location.protocol === 'file:') return;
+  fetch('vocab.json')
+    .then(function(r){ return r.ok ? r.json() : null; })
+    .then(function(data){
+      if (!data || !Array.isArray(data)) return;
+      var added = 0;
+      for (var i = 0; i < data.length; i++) {
+        var item = data[i], o;
+        if (Array.isArray(item)) {
+          o = {
+            word: item[0], ph: item[1]||'', pos: item[2]||'',
+            zh: item[3] ? String(item[3]).split('|') : [],
+            en: item[4]||'',
+            exEn: item[5] ? String(item[5]).split('|')[0] : '',
+            exZh: (item[5] && String(item[5]).indexOf('|')>=0) ? String(item[5]).split('|')[1] : '',
+            col: item[6] ? String(item[6]).split('|') : [],
+            syn: item[7] ? String(item[7]).split('|') : [],
+            ant: item[8] ? String(item[8]).split('|') : [],
+            conf: item[9] ? String(item[9]).split('|') : [],
+            gram: item[10]||'',
+            tags: item[11] ? String(item[11]).split(',') : [],
+            freq: item[12]||50
+          };
+        } else {
+          o = item;
+        }
+        if (o && o.word && !WORD_MAP[o.word]) {
+          WORDS.push(o);
+          WORD_MAP[o.word] = o;
+          added++;
+        }
+      }
+      if (added > 0) {
+        renderHome();
+        console.log('自动加载词库：' + added + ' 个');
+      }
+    })
+    .catch(function(e){ console.log('未找到 vocab.json，跳过自动加载'); });
+})();
 </script>
 </body>
 </html>
