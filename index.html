@@ -6,47 +6,23 @@
 <title>背单词</title>
 <link rel="icon" href="data:,">
 <style>
-/* ===== 浅色（初雪）默认 ===== */
 :root{
-  --bg:#F0F4F8;
-  --card-bg:#FFFFFF;
-  --text-main:#1E293B;
-  --text-sub:#64748B;
-  --border:#E2E8F0;
-  --primary:#3B82F6;
-  --primary-light:#EFF6FF;
-  --success:#10B981;
-  --warning:#F59E0B;
-  --danger:#EF4444;
-  --radius:16px;
-  --bg-extra:
-    radial-gradient(circle at 15% 20%, rgba(200,224,244,0.55) 0%, transparent 35%),
-    radial-gradient(circle at 85% 75%, rgba(226,232,240,0.5) 0%, transparent 40%),
-    radial-gradient(circle at 50% 50%, rgba(255,255,255,0.7) 0%, transparent 60%);
+  --bg:#F0F4F8;--card-bg:#FFFFFF;--text-main:#1E293B;--text-sub:#64748B;
+  --border:#E2E8F0;--primary:#3B82F6;--primary-light:#EFF6FF;
+  --success:#10B981;--warning:#F59E0B;--danger:#EF4444;--radius:16px;
+  --bg-extra:radial-gradient(circle at 15% 20%,rgba(200,224,244,.55) 0%,transparent 35%),radial-gradient(circle at 85% 75%,rgba(226,232,240,.5) 0%,transparent 40%),radial-gradient(circle at 50% 50%,rgba(255,255,255,.7) 0%,transparent 60%);
   --btn-primary-bg:linear-gradient(135deg,#3B82F6,#2563EB);
   --btn-primary-shadow:0 4px 12px rgba(59,130,246,.3);
-  --switch-bg:#E2E8F0;
-  --switch-knob:#FFFFFF;
-  --switch-border:#CBD5E1;
+  --switch-bg:#E2E8F0;--switch-knob:#FFFFFF;--switch-border:#CBD5E1;
 }
-/* ===== 深色（原版） ===== */
 body.dark{
-  --bg:#0f1115;
-  --card-bg:#171a21;
-  --text-main:#e8eaed;
-  --text-sub:#8b93a5;
-  --border:#252a35;
-  --primary:#7c5cff;
-  --primary-light:#2a2f45;
-  --success:#3ed67e;
-  --warning:#ffbe3d;
-  --danger:#ff6b5b;
+  --bg:#0f1115;--card-bg:#171a21;--text-main:#e8eaed;--text-sub:#8b93a5;
+  --border:#252a35;--primary:#7c5cff;--primary-light:#2a2f45;
+  --success:#3ed67e;--warning:#ffbe3d;--danger:#ff6b5b;
   --bg-extra:none;
   --btn-primary-bg:linear-gradient(135deg,#4f6bff,#7c5cff);
   --btn-primary-shadow:0 4px 12px rgba(90,110,255,.35);
-  --switch-bg:#2a2f45;
-  --switch-knob:#7c5cff;
-  --switch-border:#3d4557;
+  --switch-bg:#2a2f45;--switch-knob:#7c5cff;--switch-border:#3d4557;
 }
 *{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
 body{font-family:-apple-system,"PingFang SC","Microsoft YaHei",sans-serif;background:var(--bg);color:var(--text-main);min-height:100vh;line-height:1.6;background-image:var(--bg-extra);background-attachment:fixed;transition:background-color .25s ease,color .25s ease}
@@ -56,42 +32,11 @@ body{font-family:-apple-system,"PingFang SC","Microsoft YaHei",sans-serif;backgr
 .hero h1{font-size:28px;font-weight:800;letter-spacing:1px;color:var(--text-main)}
 .hero p{color:var(--text-sub);font-size:13px;margin-top:6px}
 
-/* ===== 日/夜切换 ===== */
-.theme-switch{
-  position:absolute;
-  top:20px;right:0;
-  width:64px;height:32px;
-  border-radius:16px;
-  background:var(--switch-bg);
-  border:1px solid var(--switch-border);
-  cursor:pointer;
-  display:flex;
-  align-items:center;
-  justify-content:space-between;
-  padding:0 7px;
-  overflow:hidden;
-  transition:background .3s,border-color .3s;
-  font-family:inherit;
-}
+.theme-switch{position:absolute;top:20px;right:0;width:64px;height:32px;border-radius:16px;background:var(--switch-bg);border:1px solid var(--switch-border);cursor:pointer;display:flex;align-items:center;justify-content:space-between;padding:0 7px;overflow:hidden;transition:background .3s,border-color .3s;font-family:inherit}
 .theme-switch:active{transform:scale(.96)}
-.theme-slider{
-  position:absolute;
-  width:26px;height:26px;
-  border-radius:50%;
-  background:var(--switch-knob);
-  box-shadow:0 2px 6px rgba(0,0,0,0.15);
-  left:2px;top:2px;
-  transition:transform .3s cubic-bezier(.4,0,.2,1),background .3s;
-  z-index:1;
-}
+.theme-slider{position:absolute;width:26px;height:26px;border-radius:50%;background:var(--switch-knob);box-shadow:0 2px 6px rgba(0,0,0,.15);left:2px;top:2px;transition:transform .3s cubic-bezier(.4,0,.2,1),background .3s;z-index:1}
 body.dark .theme-slider{transform:translateX(32px)}
-.theme-icon{
-  position:relative;
-  z-index:2;
-  font-size:13px;
-  line-height:1;
-  user-select:none;
-}
+.theme-icon{position:relative;z-index:2;font-size:13px;line-height:1;user-select:none}
 
 .search-wrap{position:relative;margin-bottom:14px}
 .search-box{width:100%;padding:14px 44px 14px 16px;background:var(--card-bg);border:1px solid var(--border);border-radius:var(--radius);color:var(--text-main);font-size:15px;font-family:inherit;outline:none;transition:.18s}
@@ -100,7 +45,7 @@ body.dark .theme-slider{transform:translateX(32px)}
 .search-icon{position:absolute;right:14px;top:50%;transform:translateY(-50%);color:var(--text-sub);opacity:.6;font-size:16px;pointer-events:none}
 .search-clear{position:absolute;right:14px;top:50%;transform:translateY(-50%);color:var(--text-sub);opacity:.7;font-size:18px;cursor:pointer;display:none;user-select:none}
 .search-clear.show{display:block}
-.search-results{background:var(--card-bg);border:1px solid var(--border);border-radius:var(--radius);max-height:400px;overflow-y:auto;margin-bottom:14px;display:none;box-shadow:0 4px 6px -1px rgba(0,0,0,0.05)}
+.search-results{background:var(--card-bg);border:1px solid var(--border);border-radius:var(--radius);max-height:400px;overflow-y:auto;margin-bottom:14px;display:none;box-shadow:0 4px 6px -1px rgba(0,0,0,.05)}
 .search-results.show{display:block}
 .search-item{padding:12px 16px;border-bottom:1px dashed var(--border);cursor:pointer;transition:.15s}
 .search-item:last-child{border-bottom:none}
@@ -109,7 +54,7 @@ body.dark .theme-slider{transform:translateX(32px)}
 .search-meta{font-size:12px;color:var(--text-sub);margin-top:2px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 .search-empty{padding:20px;text-align:center;color:var(--text-sub);opacity:.6;font-size:13px}
 
-.panel{background:var(--card-bg);border:1px solid var(--border);border-radius:var(--radius);padding:16px;margin-bottom:14px;box-shadow:0 2px 4px rgba(0,0,0,0.02)}
+.panel{background:var(--card-bg);border:1px solid var(--border);border-radius:var(--radius);padding:16px;margin-bottom:14px;box-shadow:0 2px 4px rgba(0,0,0,.02)}
 .label{font-size:12px;color:var(--text-sub);margin-bottom:10px;letter-spacing:.5px}
 .chips{display:flex;flex-wrap:wrap;gap:8px}
 .chip{background:var(--bg);border:1px dashed var(--border);color:var(--text-sub);border-radius:10px;padding:8px 14px;font-size:13px;cursor:pointer;transition:.18s;font-family:inherit}
@@ -131,17 +76,11 @@ body.dark .theme-slider{transform:translateX(32px)}
 .progress-text{font-size:11px;color:var(--text-sub);margin-top:5px;text-align:center}
 .title{flex:1;text-align:center;font-weight:700;font-size:15px}
 
-.card{background:var(--card-bg);border:1px dashed var(--border);border-radius:var(--radius);padding:26px 20px;margin-bottom:16px;box-shadow:0 4px 6px -1px rgba(0,0,0,0.05);position:relative}
+.card{background:var(--card-bg);border:1px dashed var(--border);border-radius:var(--radius);padding:26px 20px;margin-bottom:16px;box-shadow:0 4px 6px -1px rgba(0,0,0,.05);position:relative}
 .view-banner{background:var(--primary-light);border:1px dashed var(--primary);border-radius:10px;padding:8px 12px;margin-bottom:10px;font-size:12px;color:var(--primary);text-align:center}
 .word-head{text-align:center;padding-bottom:6px}
 .word-en{font-size:36px;font-weight:800;letter-spacing:.5px;word-break:break-word;color:var(--text-main)}
-body.dark .word-en{
-  background:linear-gradient(135deg,#e8eaed,#a8b6ff);
-  -webkit-background-clip:text;
-  background-clip:text;
-  -webkit-text-fill-color:transparent;
-  color:transparent;
-}
+body.dark .word-en{background:linear-gradient(135deg,#e8eaed,#a8b6ff);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;color:transparent}
 .phonetic{color:var(--text-sub);font-size:14px;margin-top:6px}
 .spk-big{display:block;margin:16px auto 0;background:var(--bg);border:1px solid var(--border);color:var(--primary);padding:9px 20px;border-radius:11px;font-size:13px;cursor:pointer;font-family:inherit;transition:.18s}
 .spk-big:hover{background:var(--primary-light);border-color:var(--primary)}
@@ -345,26 +284,22 @@ var FORMS_MAP = {};
 var DM_CACHE = {};
 var VIEW_MODE = false;
 var VIEW_STACK = [];
+var _ttsUnlocked = false;
 
 function addWord(o){
   if(!o||!o.word)return false;
   var idx=-1;
   for(var i=0;i<WORDS.length;i++){if(WORDS[i].word===o.word){idx=i;break;}}
   if(idx>=0)WORDS.splice(idx,1);
-  WORDS.push(o);
-  WORD_MAP[o.word]=o;
-  return true;
+  WORDS.push(o);WORD_MAP[o.word]=o;return true;
 }
-
 function parseItem(item){
   if(Array.isArray(item)){
-    var exStr=item[5]?String(item[5]):"";
-    var parts=exStr.split("|");
+    var exStr=item[5]?String(item[5]):"";var parts=exStr.split("|");
     return {word:item[0]||"",ph:item[1]||"",pos:item[2]||"",zh:item[3]?String(item[3]).split("|"):[],en:item[4]||"",exEn:parts[0]||"",exZh:parts[1]||"",col:item[6]?String(item[6]).split("|"):[],syn:item[7]?String(item[7]).split("|"):[],ant:item[8]?String(item[8]).split("|"):[],conf:item[9]?String(item[9]).split("|"):[],gram:item[10]||"",tags:item[11]?String(item[11]).split(","):[],freq:item[12]||50};
   }
   return {word:item.word||item.headWord||"",ph:item.ph||item.phonetic||"",pos:item.pos||"",zh:Array.isArray(item.zh)?item.zh:(item.translation?String(item.translation).split("|"):[]),en:item.en||item.definition||"",exEn:item.exEn||item.example||"",exZh:item.exZh||"",col:item.col||[],syn:item.syn||[],ant:item.ant||[],conf:item.conf||[],gram:item.gram||"",tags:item.tags||[],freq:item.freq||50};
 }
-
 for(var _i=0;_i<RAW.length;_i++){addWord(parseItem(RAW[_i]));}
 
 var BOOKS = {all:{name:"全部词库",fn:null},cet6:{name:"六级完整词库",fn:"cet6"},cet6core:{name:"六级核心词",fn:"core"},cet6high:{name:"六级高频词",fn:"high"},kaoyan:{name:"考研英语二",fn:"kaoyan"},unknown:{name:"我的生词本",fn:null}};
@@ -372,7 +307,6 @@ var BOOKS = {all:{name:"全部词库",fn:null},cet6:{name:"六级完整词库",f
 function safeParse(key,fallback){try{var v=localStorage.getItem(key);if(!v)return fallback;var r=JSON.parse(v);return r||fallback;}catch(e){return fallback;}}
 function safeSave(key,val){try{localStorage.setItem(key,JSON.stringify(val));return true;}catch(e){return false;}}
 
-/* ===== 主题切换 ===== */
 function applyTheme(isDark){
   if(isDark){document.body.classList.add("dark");}
   else{document.body.classList.remove("dark");}
@@ -387,7 +321,6 @@ document.getElementById("themeSwitch").onclick=function(){
   if(saved===true||saved==="true")applyTheme(true);
 })();
 
-/* ===== Datamuse ===== */
 function fetchSynAnt(word,cb){
   var key=word.toLowerCase();
   if(DM_CACHE[key]){cb(DM_CACHE[key]);return;}
@@ -427,7 +360,16 @@ function pickVoice(){
 }
 if(window.speechSynthesis){speechSynthesis.onvoiceschanged=pickVoice;pickVoice();}
 
-/* ===== 发音（有道真人） ===== */
+function unlockTTS(){
+  if(_ttsUnlocked||!window.speechSynthesis)return;
+  _ttsUnlocked=true;
+  try{
+    var u=new SpeechSynthesisUtterance(" ");
+    u.volume=0;u.rate=2;
+    speechSynthesis.speak(u);
+  }catch(e){}
+}
+
 function _stopAll(){
   if(window._curAudio){try{window._curAudio.pause();}catch(e){}window._curAudio=null;}
   if(window.speechSynthesis)speechSynthesis.cancel();
@@ -452,31 +394,40 @@ function speakWord(w){
 function speakExample(ex){
   if(!ex)return;
   _stopAll();
-  if(ex.length>300){
-    if(window.speechSynthesis){
-      var u=new SpeechSynthesisUtterance(ex);
-      u.lang="en-US";u.rate=0.82;
-      if(voice)u.voice=voice;
-      speechSynthesis.speak(u);
-    }
-    return;
-  }
-  var url="https://dict.youdao.com/dictvoice?audio="+encodeURIComponent(ex)+"&type=2";
-  var a=new Audio(url);
-  window._curAudio=a;
-  a.play().catch(function(){
-    if(window.speechSynthesis){
-      var u=new SpeechSynthesisUtterance(ex);
-      u.lang="en-US";u.rate=0.82;
-      if(voice)u.voice=voice;
-      speechSynthesis.speak(u);
-    }
-  });
+  if(!window.speechSynthesis)return;
+  var u=new SpeechSynthesisUtterance(ex);
+  u.lang="en-US";u.rate=0.82;
+  if(voice)u.voice=voice;
+  speechSynthesis.speak(u);
 }
 
-/* 揭示释义后只播单词，例句不再自动播 */
+/* 单词：有道真人音；例句：speechSynthesis 自动播（延迟 300ms 让单词先出来） */
 function speakWordAndExample(w,ex){
-  speakWord(w);
+  if(!w)return;
+  _stopAll();
+  var url="https://dict.youdao.com/dictvoice?audio="+encodeURIComponent(w)+"&type=2";
+  var a=new Audio(url);
+  window._curAudio=a;
+
+  var speakEx = function(){
+    if(!ex||!window.speechSynthesis)return;
+    var u=new SpeechSynthesisUtterance(ex);
+    u.lang="en-US";u.rate=0.82;
+    if(voice)u.voice=voice;
+    speechSynthesis.speak(u);
+  };
+
+  a.onended = speakEx;
+
+  a.play().catch(function(){
+    // 有道失败 → 用浏览器语音播单词，然后在 onend 里播例句
+    if(!window.speechSynthesis)return;
+    var u=new SpeechSynthesisUtterance(w);
+    u.lang="en-GB";u.rate=0.85;
+    if(voice)u.voice=voice;
+    u.onend = speakEx;
+    speechSynthesis.speak(u);
+  });
 }
 
 function show(id){
@@ -485,7 +436,6 @@ function show(id){
   document.getElementById("page-"+id).classList.add("active");
   window.scrollTo(0,0);
 }
-
 function esc(s){return String(s).replace(/[&<>"']/g,function(c){var m={"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"};return m[c];});}
 
 function doSearch(q){
@@ -513,8 +463,7 @@ function searchJumpTo(word){
   document.getElementById("searchBox").value="";
   document.getElementById("searchResults").classList.remove("show");
   document.getElementById("searchClear").classList.remove("show");
-  _stopAll();
-  VIEW_MODE=false;VIEW_STACK=[];S.finished=false;
+  _stopAll();VIEW_MODE=false;VIEW_STACK=[];S.finished=false;
   S.cur=target;S.revealed=false;
   var newQueue=[target];for(var j=0;j<S.queue.length;j++){if(S.queue[j].word!==target.word)newQueue.push(S.queue[j]);}
   S.queue=newQueue;S.total=Math.max(S.total,S.mastered+S.queue.length);
@@ -579,6 +528,7 @@ function getBookList(){
 }
 
 function startStudy(){
+  unlockTTS();
   var list=getBookList();
   if(!list.length){alert("该词库暂无单词");return;}
   if(S.order==="alpha")list.sort(function(a,b){return a.word.localeCompare(b.word);});
@@ -599,6 +549,7 @@ function nextCard(){
 function rate(r){
   if(VIEW_MODE)return;
   if(S.revealed||S.finished)return;
+  unlockTTS();
   var w=S.cur;if(!w)return;
   var queueBefore=S.queue.slice();
   var masteredBefore=S.mastered;
