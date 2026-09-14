@@ -38,14 +38,12 @@ body{font-family:-apple-system,"PingFang SC","Microsoft YaHei",sans-serif;backgr
 body.dark .theme-slider{transform:translateX(32px)}
 .theme-icon{position:relative;z-index:2;font-size:13px;line-height:1;user-select:none}
 
-/* 统计卡片 */
 .stats-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:14px}
 .stat-card{background:var(--card-bg);border:1px solid var(--border);border-radius:14px;padding:12px 14px;box-shadow:0 2px 4px rgba(0,0,0,.03)}
 .stat-label{font-size:11px;color:var(--text-sub);letter-spacing:.5px;margin-bottom:4px}
 .stat-value{font-size:22px;font-weight:800;color:var(--primary);line-height:1.2}
 .stat-value small{font-size:12px;color:var(--text-sub);font-weight:500;margin-left:2px}
 
-/* 双按钮 */
 .main-actions{display:flex;gap:10px;margin-bottom:14px}
 .btn-half{flex:1;padding:16px 12px;border:none;border-radius:var(--radius);font-size:16px;font-weight:700;cursor:pointer;font-family:inherit;transition:.2s;position:relative;color:#fff}
 .btn-half:active{transform:scale(.97)}
@@ -145,7 +143,7 @@ body.dark .gram{background:#2a2410;border-color:#4a3d15;color:#ffd77a}
 .root-line{display:flex;align-items:baseline;gap:8px;flex-wrap:wrap;margin-bottom:6px}
 .root-name{font-size:16px;font-weight:800;color:var(--primary);font-family:"SF Mono",Menlo,monospace}
 .root-mean{font-size:13px;color:var(--text-main)}
-.root-word-note{font-size:12.5px;color:var(--text-main);margin-top:3px}
+.root-word-note{font-size:12.5px;color:var(--text-main);margin-top:3px;white-space:pre-wrap;line-height:1.7}
 
 .root-group-title{font-size:13px;font-weight:700;color:var(--primary);padding:14px 0 6px;letter-spacing:.5px}
 .root-card{background:var(--card-bg);border:1px solid var(--border);border-radius:12px;margin-bottom:8px;overflow:hidden}
@@ -212,6 +210,25 @@ body.dark .gram{background:#2a2410;border-color:#4a3d15;color:#ffd77a}
 .import-btn{width:100%;padding:13px;border:none;border-radius:12px;font-size:14px;font-weight:700;background:var(--btn-primary-bg);color:#fff;cursor:pointer;font-family:inherit}
 .import-status{margin-top:10px;font-size:12.5px;color:var(--primary);line-height:1.6;min-height:18px;white-space:pre-wrap}
 
+.version-footer{position:fixed;bottom:10px;right:14px;font-size:10.5px;color:var(--text-sub);opacity:.55;cursor:pointer;z-index:100;letter-spacing:.5px;transition:opacity .18s;user-select:none}
+.version-footer:hover{opacity:1}
+
+.modal-mask{position:fixed;inset:0;background:rgba(15,17,21,.5);display:none;align-items:center;justify-content:center;z-index:10001;padding:20px;backdrop-filter:blur(4px);-webkit-backdrop-filter:blur(4px)}
+.modal-mask.show{display:flex;animation:modalIn .2s ease}
+@keyframes modalIn{from{opacity:0}to{opacity:1}}
+.modal-card{background:var(--card-bg);border:1px solid var(--border);border-radius:18px;max-width:480px;width:100%;max-height:80vh;overflow:auto;padding:22px;box-shadow:0 20px 60px rgba(0,0,0,.25);animation:cardIn .25s cubic-bezier(.22,1,.36,1)}
+@keyframes cardIn{from{transform:translateY(12px) scale(.98);opacity:0}to{transform:none;opacity:1}}
+.modal-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:16px}
+.modal-title{font-size:17px;font-weight:800;color:var(--text-main)}
+.modal-close{background:transparent;border:none;color:var(--text-sub);font-size:20px;cursor:pointer;font-family:inherit;padding:0 4px;line-height:1}
+.modal-close:hover{color:var(--primary)}
+.log-version{font-size:14px;font-weight:800;color:var(--primary);margin-top:14px;margin-bottom:4px}
+.log-version:first-child{margin-top:0}
+.log-date{font-size:11.5px;color:var(--text-sub);opacity:.8;margin-bottom:8px}
+.log-items{list-style:none;padding-left:0}
+.log-items li{font-size:13.5px;color:var(--text-main);padding:4px 0 4px 18px;position:relative;line-height:1.6}
+.log-items li:before{content:"✦";position:absolute;left:2px;color:var(--primary);opacity:.7;font-size:11px}
+
 @media(max-width:420px){
   .word-en{font-size:30px}
   .card{padding:22px 16px}
@@ -232,6 +249,13 @@ body.dark .gram{background:#2a2410;border-color:#4a3d15;color:#ffd77a}
       <span class="theme-icon">🌙</span>
     </button>
   </div>
+
+  <div class="search-wrap">
+    <input type="text" class="search-box" id="searchBox" placeholder="搜索单词…" autocomplete="off">
+    <span class="search-icon">&#128269;</span>
+    <span class="search-clear" id="searchClear">&times;</span>
+  </div>
+  <div class="search-results" id="searchResults"></div>
 
   <div class="stats-grid">
     <div class="stat-card">
@@ -254,21 +278,14 @@ body.dark .gram{background:#2a2410;border-color:#4a3d15;color:#ffd77a}
 
   <div class="main-actions">
     <button class="btn-half btn-review" id="btnReview">
-      <span class="btn-half-title">复习</span>
+      <span class="btn-half-title" id="reviewTitle">复习</span>
       <span class="btn-half-sub" id="reviewSub">今天 0 个</span>
     </button>
     <button class="btn-half btn-study" id="btnStudy">
-      <span class="btn-half-title">背诵</span>
-      <span class="btn-half-sub">新词</span>
+      <span class="btn-half-title" id="studyTitle">背诵</span>
+      <span class="btn-half-sub" id="studySub">新词</span>
     </button>
   </div>
-
-  <div class="search-wrap">
-    <input type="text" class="search-box" id="searchBox" placeholder="搜索单词…" autocomplete="off">
-    <span class="search-icon">&#128269;</span>
-    <span class="search-clear" id="searchClear">&times;</span>
-  </div>
-  <div class="search-results" id="searchResults"></div>
 
   <div class="panel"><div class="label">选择单词书</div><div class="chips" id="bookChips"></div></div>
   <div class="panel"><div class="label">排列顺序</div><div class="chips" id="orderChips">
@@ -339,12 +356,58 @@ body.dark .gram{background:#2a2410;border-color:#4a3d15;color:#ffd77a}
 </div>
 
 <div id="popup" class="popup"></div>
+<div class="version-footer" id="versionFooter">V2.2</div>
+
+<div class="modal-mask" id="changelogModal">
+  <div class="modal-card">
+    <div class="modal-head">
+      <div class="modal-title">📢 更新公告</div>
+      <button class="modal-close" id="changelogClose">&times;</button>
+    </div>
+    <div id="changelogContent"></div>
+  </div>
+</div>
 
 <script>
-/* ===== 词根词缀数据 ===== */
+var APP_VERSION = "V2.2";
+var CHANGELOG = [
+  {
+    version: "V2.2",
+    date: "2026-09-14",
+    items: [
+      "接入 GPT4 词根词缀词典，覆盖 8000+ 单词的详细词根拆解",
+      "独立词根板块扩充至 120 个常用词根词缀",
+      "单词卡上的「词根词缀」模块优先显示详细拆解"
+    ]
+  },
+  {
+    version: "V2.1",
+    date: "2026-09-14",
+    items: [
+      "新增中断恢复：中途返回首页后，按钮变为「继续背诵 / 继续复习」",
+      "新增版本公告与底部版本号",
+      "数据保存在浏览器本地，刷新页面后仍可继续上一轮"
+    ]
+  },
+  {
+    version: "V2.0",
+    date: "2026-09-14",
+    items: [
+      "新增遗忘曲线复习：学过的词按 1/3/7/15/30 天自动安排复习",
+      "新增首页统计卡片：已掌握、今日已学、连续学习、今日待复习",
+      "「开始背诵」拆分为「复习」和「背诵」两个按钮",
+      "不会的词现在能快速反复出现（不认识 +3 次，模糊 +1 次）"
+    ]
+  }
+];
+
+/* ===== GPT4 词根数据（从 roots.json 加载） ===== */
+var ROOTS_GPT = {};
+
+/* ===== 手写词根词缀表（120 个） ===== */
 var ROOT_DATA = [
-["prefix","pre-","前，预先","predict=pre + dict(说)=提前说 → 预言;prepare=pre + pare(准备)=提前弄好 → 准备;prevent=pre + vent(来)=先来一步 → 阻止;preview=pre + view(看)=提前看 → 预览;previous=pre + vi(路) + ous=走在前面 → 以前的"],
-["prefix","post-","后","postpone=post + pone(放)=往后放 → 推迟;postwar=post + war=战后的;posterior=post + erior=后面的;postgraduate=post + graduate=大学毕业后 → 研究生"],
+["prefix","pre-","前，预先","predict=pre + dict(说)=提前说 → 预言;prepare=pre + pare(准备)=提前弄好 → 准备;prevent=pre + vent(来)=先来一步 → 阻止;preview=pre + view(看)=提前看 → 预览"],
+["prefix","post-","后","postpone=post + pone(放)=往后放 → 推迟;postwar=post + war=战后的;postgraduate=post + graduate=大学毕业后 → 研究生"],
 ["prefix","re-","再，回","return=re + turn(转)=转回来 → 返回;review=re + view(看)=再看 → 复习;repeat=re + peat(请求)=再次请求 → 重复;recall=re + call(叫)=叫回 → 回忆;rebuild=re + build=重建"],
 ["prefix","un-","不，相反","unhappy=un + happy=不开心;unable=un + able=不能的;unknown=un + known=未知的;unlock=un + lock=开锁;unusual=un + usual=不寻常的"],
 ["prefix","dis-","不，分开","disagree=dis + agree=不同意;disappear=dis + appear=消失;discover=dis + cover=揭开盖子 → 发现;disorder=dis + order=无秩序 → 混乱;discount=dis + count=不算 → 折扣"],
@@ -358,11 +421,36 @@ var ROOT_DATA = [
 ["prefix","inter-","之间，相互","international=inter + national=国家之间的 → 国际的;internet=inter + net=网络之间的 → 互联网;interrupt=inter + rupt(断)=中间断开 → 打断;interview=inter + view=互相看 → 面试"],
 ["prefix","con- / com-","共同，一起","connect=con + nect(绑)=绑在一起 → 连接;combine=com + bine(二)=合二为一 → 结合;confirm=con + firm(坚固)=使坚固 → 确认;company=com + pan(面包) + y=一起吃面包的人 → 公司"],
 ["prefix","ex-","出，向外","exit=ex + it(走)=走出去 → 出口;export=ex + port(带)=带出去 → 出口;exclude=ex + clude(关)=关在外面 → 排除;expand=ex + pand(展开)=向外展开 → 扩张"],
+["prefix","ab-","离开，相反","abnormal=ab + normal=离开正常 → 反常的;absent=ab + sent(在)=不在 → 缺席;absorb=ab + sorb(吸)=吸走 → 吸收;abstract=ab + tract(拉)=从里面拉出来 → 抽象"],
+["prefix","ad-","向，朝","advance=ad + vance(前)=向前 → 前进;adapt=ad + apt(适合)=使适合 → 适应;adopt=ad + opt(选)=选择过来 → 收养;adhere=ad + here(粘)=粘上去 → 附着"],
+["prefix","anti-","反对，抗","antiwar=anti + war=反战的;antibiotic=anti + bio(生) + tic=抗生的 → 抗生素;antisocial=anti + social=反社会的;anticipate=anti + cip(拿) + ate=提前拿 → 预期"],
+["prefix","auto-","自己，自动","automatic=auto + matic(做)=自己动 → 自动的;automobile=auto + mobile(动)=自己动 → 汽车;autograph=auto + graph(写)=自己写的 → 亲笔签名;autobiography=auto + bio(生) + graphy=写自己的生 → 自传"],
+["prefix","bi-","二，双","bicycle=bi + cycle(轮)=两个轮 → 自行车;bilingual=bi + lingu(语言) + al=两种语言 → 双语的;bimonthly=bi + month + ly=两月一次 → 双月刊;binary=bi + nary=二进制的"],
+["prefix","co-","共同","cooperate=co + operate=共同操作 → 合作;coexist=co + exist=共存;coordinate=co + ordin(顺序) + ate=共同排序 → 协调;co-author=co + author=共同作者"],
+["prefix","de-","下，去除","decline=de + cline(倾斜)=向下倾 → 下降;decrease=de + crease(长)=减少;deforest=de + forest=去掉森林 → 砍伐;destroy=de + stroy(建)=拆掉 → 破坏"],
+["prefix","en-","使，进入","enable=en + able=使能够;enlarge=en + large=使变大;enclose=en + close=包进去 → 围住;enrich=en + rich=使富有"],
+["prefix","extra-","超出","extraordinary=extra + ordinary=超出普通 → 非凡的;extract=ex + tract(拉)=拉出来 → 提取;extraterrestrial=extra + terrest(地球) + rial=地球之外 → 外星"],
+["prefix","fore-","前，先","forecast=fore + cast(投)=提前投 → 预测;foresee=fore + see=预先看到 → 预见;forehead=fore + head=头前部 → 额头;forefather=fore + father=之前的父亲 → 祖先"],
+["prefix","hyper-","超，过度","hyperactive=hyper + active=过度活跃的;hypertension=hyper + tension=过度紧张 → 高血压;hyperlink=hyper + link=超级链接"],
+["prefix","macro-","大，宏观","macroeconomics=macro + economics=宏观经济学;macroscopic=macro + scop(看) + ic=看大的 → 宏观的"],
+["prefix","micro-","小，微","microscope=micro + scope(看)=看小的 → 显微镜;microphone=micro + phone(声)=放大声音 → 麦克风;microwave=micro + wave=微波;microbe=micro + be(生)=小生物 → 微生物"],
+["prefix","mini-","小","miniature=mini + ature=小型的;minimum=mini + mum=最小;minor=mini + or=较小的;minimize=mini + mize=使最小"],
+["prefix","multi-","多","multimedia=multi + media=多媒体;multiply=multi + ply(折)=多折 → 乘，繁殖;multitude=multi + tude=众多;multicolor=multi + color=多色的"],
+["prefix","non-","不，非","nonsense=non + sense=没意义 → 胡说;nonstop=non + stop=不停的;nonfiction=non + fiction=非虚构;nonprofit=non + profit=非盈利"],
+["prefix","out-","出，超过","outcome=out + come=出来的结果;outstanding=out + standing=站在外面 → 杰出的;outbreak=out + break=爆发;outnumber=out + number=数量超过"],
+["prefix","para-","旁边，辅助","parallel=para + llel=并排的;paragraph=para + graph(写)=写在旁边的字 → 段落;paradox=para + dox(看法)=和常见看法并立 → 悖论"],
+["prefix","poly-","多","polygon=poly + gon(角)=多角形;polytechnic=poly + technic=多种技术 → 理工学院;polysemy=poly + sem(意义)=多义"],
+["prefix","pro-","前，支持","progress=pro + gress(走)=向前走 → 进步;promote=pro + mote(动)=向前动 → 促进;protect=pro + tect(盖)=前盖 → 保护;propose=pro + pose(放)=放到前面 → 提议"],
+["prefix","semi-","半","semicircle=semi + circle=半圆;semicolon=semi + colon=分号;semiconductor=semi + conductor=半导体"],
+["prefix","tele-","远","telephone=tele + phone(声)=远处的声音 → 电话;television=tele + vision(看)=远处看 → 电视;telescope=tele + scope(看)=看远处 → 望远镜;telegraph=tele + graph(写)=远距离写 → 电报"],
+["prefix","tri-","三","triangle=tri + angle=三角形;tricycle=tri + cycle=三轮车;trio=tri + o=三重奏;triple=tri + ple=三倍"],
+["prefix","ultra-","超，极","ultraviolet=ultra + violet=紫外线的;ultrasonic=ultra + sonic=超声的;ultramodern=ultra + modern=超现代的"],
+["prefix","uni-","一，单","uniform=uni + form=一种形式 → 制服，统一的;unite=uni + te=使成一 → 联合;unique=uni + que=独特的;universe=uni + verse(转)=转成一 → 宇宙"],
 
 ["root","dict","说","predict=pre + dict=提前说 → 预言;dictate=dict + ate=说 → 命令，听写;dictionary=dict + ion + ary=说话的工具 → 词典;contradict=contra(反) + dict=说反话 → 反驳;verdict=ver(真) + dict=说真话 → 裁决"],
 ["root","duct","引导","conduct=con + duct=一起引导 → 指挥，行为;introduce=intro(内) + duce=引导进来 → 介绍;produce=pro(前) + duce=向前引 → 生产;reduce=re(回) + duce=引回 → 减少;educate=e(出) + duc + ate=引导出来 → 教育"],
 ["root","fer","拿，带","transfer=trans(越) + fer=带着越过 → 转移;refer=re(回) + fer=带回来 → 提到;prefer=pre(前) + fer=拿到前面 → 更喜欢;offer=of(向) + fer=带向 → 提供;differ=dif(分开) + fer=分开带 → 不同"],
-["root","form","形状","inform=in(入) + form=给形状 → 通知;reform=re + form=重新造形 → 改革;transform=trans + form=变形;uniform=uni(一) + form=一个形状 → 制服，统一的;perform=per(完全) + form=完全造形 → 表演"],
+["root","form","形状","inform=in(入) + form=给形状 → 通知;reform=re + form=重新造形 → 改革;transform=trans + form=变形;uniform=uni(一) + form=一个形状 → 制服;perform=per(完全) + form=完全造形 → 表演"],
 ["root","graph","写，画","photograph=photo(光) + graph=用光写 → 照片;biography=bio(生) + graph + y=写一生 → 传记;geography=geo(地) + graph + y=写大地 → 地理;paragraph=para(旁边) + graph=写在旁边的字 → 段落"],
 ["root","ject","投，扔","reject=re(回) + ject=扔回 → 拒绝;project=pro(前) + ject=向前投 → 项目;inject=in(入) + ject=投入 → 注射;object=ob(对面) + ject=扔到对面 → 物体，反对;subject=sub(下) + ject=扔在下面 → 主题，服从"],
 ["root","log","说话，学科","biology=bio(生) + logy=研究生命的学问 → 生物学;psychology=psycho(心灵) + logy=心理学;apologize=apo(离开) + log + ize=说话推开 → 道歉;dialogue=dia(之间) + logue=两人之间说话 → 对话"],
@@ -390,17 +478,72 @@ var ROOT_DATA = [
 ["root","sens / sent","感觉","sense=sens=感觉;sensation=sens + ation=感觉;sentiment=senti + ment=感情;consent=con(一起) + sent=共同感觉 → 同意;resent=re(再) + sent=再感觉 → 怨恨"],
 ["root","vac","空","vacant=vac + ant=空的 → 空的;vacation=vac + ation=空下来的时间 → 假期;vacuum=vac + uum=真空;evacuate=e(出) + vac + uate=把里面弄空 → 疏散"],
 ["root","ver","真实","verify=ver + ify=使真实 → 验证;verdict=ver + dict=说真话 → 裁决;veritable=ver + itable=真实的;veracity=ver + acity=真实 → 诚实"],
+["root","aud","听","audience=audi + ence=听的人 → 观众;audio=audi + o=声音的;audit=aud + it=听 → 审计;aural=aur + al=耳朵的"],
+["root","bio","生命","biology=bio + logy=生物学;biography=bio + graph + y=传记;antibiotic=anti + bio + tic=抗生素;biochemistry=bio + chemistry=生物化学"],
+["root","chron","时间","chronic=chron + ic=长期的;chronology=chron + ology=年代学;synchronize=syn(一起) + chron + ize=使时间一致 → 同步;anachronism=ana(反) + chron + ism=时间错位"],
+["root","corp","身体","corporation=corp + oration=团体 → 公司;corpse=corp + se=尸体;corporal=corp + oral=身体的;incorporate=in + corp + orate=使成一体"],
+["root","cur","跑","current=cur + rent=跑的 → 水流，电流;occur=oc(向) + cur=向…跑 → 发生;excurse=ex(出) + curse=跑出去 → 远足;curriculum=cur + riculum=跑的过程 → 课程"],
+["root","dem","人民","democracy=dem + ocracy(统治)=人民统治 → 民主;democratic=dem + ocratic=民主的;epidemic=epi(在…上) + dem + ic=在人民之上 → 流行病"],
+["root","doc","教","doctor=doc + tor=教师 → 博士;document=doc + ument=教的东西 → 文件;doctrine=doc + trine=教条;docile=doc + ile=可教的 → 温顺的"],
+["root","equ","相等","equal=equ + al=相等的;equator=equ + ator=等分线 → 赤道;equivalent=equi + val(价值) + ent=等价;equilibrium=equi + librium(平衡)=平衡"],
+["root","geo","地","geography=geo + graph + y=地理;geology=geo + logy=地质学;geometry=geo + metry(测量)=几何;geopolitics=geo + politics=地缘政治"],
+["root","hydr","水","hydrogen=hydro + gen(产生)=产生水的 → 氢;dehydrate=de(去) + hydrate=脱水;hydraulic=hydr + aulic(管)=水管的"],
+["root","jud","判断","judge=jud + ge=判断;judicial=jud + icial=司法的;prejudice=pre + jud + ice=预先判断 → 偏见;judicious=jud + icious=明智的"],
+["root","labor","劳动","laboratory=labor + atory=干活的地方 → 实验室;collaborate=col(一起) + labor + ate=一起劳动 → 合作;elaborate=e(出) + labor + ate=做出来的 → 精细的"],
+["root","leg","读，法","legal=leg + al=法律的;legislate=leg + islate=立法;legend=leg + end=该读的东西 → 传说;privilege=privi(私) + leg + e=私人法律 → 特权"],
+["root","liber","自由","liberty=liber + ty=自由;liberal=liber + al=自由的;liberate=liber + ate=解放;deliberate=de + liber + ate=反复权衡 → 深思熟虑的"],
+["root","loc","地方","local=loc + al=地方的;locate=loc + ate=定位;dislocate=dis(离开) + locate=使脱位;locomotive=loco + motive=移动的 → 火车头"],
+["root","man / manu","手","manual=manu + al=手动的;manufacture=manu + fact + ure=手工制造;manuscript=manu + script=手稿;manage=man + age=用手处理 → 管理"],
+["root","mater / matr","母","maternal=mater + nal=母亲的;maternity=mater + nity=母性;matrix=mater + ix=母体 → 矩阵;matron=matr + on=主妇"],
+["root","mob / mot","移动","mobile=mob + ile=移动的;mobilize=mob + ilize=动员;motion=mot + ion=运动;promote=pro + mote=向前动 → 促进"],
+["root","mort","死","mortal=mort + al=会死的;immortal=im(不) + mortal=不死的;mortgage=mort + gage=死契 → 抵押;mortuary=mort + uary=停尸房"],
+["root","nat","出生","nature=nat + ure=生出来的 → 自然;native=nat + ive=本地的;nation=nat + ion=生在一起的人 → 民族;prenatal=pre(前) + natal=出生前的"],
+["root","nom","名字","nominate=nom + inate=提名;nominal=nom + inal=名义上的;synonym=syn(一起) + onym=同名的词 → 同义词;antonym=ant(反) + onym=反义词"],
+["root","norm","标准","normal=norm + al=标准的;abnormal=ab(离开) + normal=不正常的;enormous=e(出) + norm + ous=超出标准 → 巨大的"],
+["root","opt","选择","option=opt + ion=选择;optional=opt + ional=可选的;optimism=opt + imism=选最好的 → 乐观;adopt=ad(向) + opt=选过来 → 采纳"],
+["root","ord","顺序","order=ord + er=顺序;ordinary=ord + inary=按顺序的 → 普通的;coordinate=co(一起) + ordin + ate=协调;disorder=dis(不) + order=无序"],
+["root","pat","父亲","paternal=pat + ernal=父亲的;paternity=pat + ernity=父权;patriot=pat + riot=爱父亲 → 爱国者;patron=pat + ron=保护人"],
+["root","pel / puls","推","expel=ex(出) + pel=推出去 → 驱逐;compel=com(一起) + pel=强迫;impulse=im(入) + pulse=推动;propel=pro(前) + pel=推进"],
+["root","pend","挂","depend=de(下) + pend=挂下来 → 依赖;pendant=pend + ant=吊坠;suspend=sus(下) + pend=悬挂;append=ap(向) + pend=挂上去 → 附加"],
+["root","phil","爱","philosophy=philo + sophy(智慧)=爱智慧 → 哲学;philanthropy=phil + anthropy(人类)=爱人类 → 慈善;philharmonic=phil + harmonic=爱好音乐的"],
+["root","pop","人民","popular=pop + ular=人民的;population=pop + ulation=人口;populous=pop + ulous=人口多的;popularize=popular + ize=使流行"],
+["root","reg","统治","regular=reg + ular=按规则的;regime=reg + ime=政权;region=reg + ion=统治区 → 地区;regulate=reg + ulate=管理"],
+["root","rupt","破","interrupt=inter(中间) + rupt=打断;erupt=e(出) + rupt=喷出;corrupt=cor(一起) + rupt=完全破了 → 腐败;bankrupt=bank + rupt=银行破了 → 破产"],
+["root","sci","知道","science=sci + ence=知识 → 科学;conscious=con + sci + ous=一起知道 → 有意识的;conscience=con + sci + ence=良知;omniscient=omni(全) + scient=全知的"],
+["root","seq","跟随","sequence=seq + uence=顺序;consequence=con + sequ + ence=跟随而来的 → 结果;subsequent=sub(下) + sequ + ent=随后的"],
+["root","serv","服务，保持","service=serv + ice=服务;preserve=pre(前) + serve=预先保存;reserve=re(回) + serve=保留;observe=ob(向) + serve=向…看 → 观察"],
+["root","sign","记号","signal=sign + al=信号;significant=sign + ific + ant=有意义的;design=de(下) + sign=做记号 → 设计;assign=as(向) + sign=分配"],
+["root","sol","太阳，独","solar=sol + ar=太阳的;solitude=sol + itude=独处;solo=sol + o=独奏;desolate=de + sol + ate=孤独的"],
+["root","son","声音","sonic=son + ic=声音的;resonance=re(回) + son + ance=回声 → 共鸣;supersonic=super(超) + sonic=超音速的;unison=uni(一) + son=齐声"],
+["root","soph","智慧","philosophy=philo(爱) + sophy=爱智慧;Sophia=soph + ia=智慧女神;sophisticated=soph + isticated=老练的; sophism=soph + ism=诡辩"],
+["root","tempor","时间","temporary=tempor + ary=暂时的;contemporary=con(一起) + tempor + ary=同时代的;tempo=tempor + o=节奏"],
+["root","ten","持有","contain=con(一起) + tain=一起拿住 → 包含;maintain=main(手) + tain=用手拿住 → 维持;retain=re(回) + tain=保留;sustain=sus(下) + tain=支撑"],
+["root","terr","地","territory=terr + itory=领土;terrain=terr + ain=地形;terrestrial=terr + estrial=地球的;subterranean=sub(下) + terr + anean=地下的"],
+["root","test","证明","testify=test + ify=证明;testament=test + ament=证明 → 遗嘱;protest=pro(前) + test=公开声明 → 抗议;contest=con(一起) + test=一起证明 → 竞赛"],
+["root","the","神","theology=the + ology=神学;atheist=a(无) + the + ist=无神论者;theism=the + ism=有神论"],
+["root","therm","热","thermal=therm + al=热的;thermometer=thermo + meter(测量)=温度计;thermos=therm + os=保温瓶;hypothermia=hypo(低) + therm + ia=低体温"],
+["root","uni","一","unite=uni + te=联合;uniform=uni + form=统一的;unique=uni + que=独特的;universe=uni + verse=转成一 → 宇宙"],
+["root","urb","城市","urban=urb + an=城市的;suburb=sub(下) + urb=城郊;urbane=urb + ane=有礼貌的;urbanize=urban + ize=城市化"],
+["root","val","价值","value=val + ue=价值;valid=val + id=有效的;evaluate=e + valu + ate=评估;equivalent=equi(等) + val + ent=等价的"],
+["root","vari","变化","various=vari + ous=多种多样的;variety=vari + ety=多样性;vary=var + y=变化;invariable=in(不) + variable=不变的"],
+["root","viv","活","vivid=viv + id=生动的;survive=sur(超) + vive=活过来 → 幸存;revive=re(再) + vive=复活;vivacious=viv + acious=活泼的"],
+["root","volv","滚","involve=in(入) + volve=卷进去 → 涉及;revolve=re(回) + volve=转动;evolve=e(出) + volve=卷出来 → 进化;revolution=re + volution=革命"],
 
 ["suffix","-able / -ible","能……的，可……的","comfortable=comfort + able=能带来舒适的;reliable=rely + able=可以依靠的;possible=poss(能) + ible=可能的;visible=vis + ible=可看见的;valuable=value + able=有价值的"],
 ["suffix","-ance / -ence","状态，性质","importance=import + ance=重要性;difference=differ + ence=不同;performance=perform + ance=表演，表现;confidence=confide + ence=自信"],
 ["suffix","-ate","使……，做……","activate=act + ivate=使活跃;celebrate=celebr + ate=庆祝;communicate=commun + icate=交流;demonstrate=demonstr + ate=演示"],
 ["suffix","-er / -or","做……的人或物","teacher=teach + er=教师;worker=work + er=工人;actor=act + or=演员;visitor=visit + or=访问者;editor=edit + or=编辑"],
 ["suffix","-ify","使……","simplify=simple + ify=简化;classify=class + ify=分类;identify=ident + ify=识别;purify=pure + ify=净化"],
-["suffix","-ity","性质，状态","ability=able + ity=能力;activity=active + ity=活动;quality=qual + ity=质量;reality=real + ity=现实;curiosity=curious + ity=好奇心"],
+["suffix","-ity","性质，状态","ability=able + ity=能力;activity=active + ity=活动;quality=qual + ity=质量;reality=real + ity=现实"],
 ["suffix","-ive","……的，有……性质的","active=act + ive=活跃的;creative=create + ive=有创造力的;effective=effect + ive=有效的;expensive=expense + ive=昂贵的"],
 ["suffix","-ize / -ise","使……化","realize=real + ize=实现;organize=organ + ize=组织;modernize=modern + ize=现代化;apologize=apology + ize=道歉"],
 ["suffix","-tion / -sion","名词后缀","information=inform + ation=信息;education=educate + ion=教育;decision=decide + sion=决定;discussion=discuss + ion=讨论"],
-["suffix","-ous","多……的，有……性质的","famous=fame + ous=有名的;dangerous=danger + ous=危险的;curious=cur + ious=好奇的;generous=gener + ous=慷慨的"]
+["suffix","-ous","多……的，有……性质的","famous=fame + ous=有名的;dangerous=danger + ous=危险的;curious=cur + ious=好奇的;generous=gener + ous=慷慨的"],
+["suffix","-ment","名词后缀，行为/结果","movement=move + ment=运动;government=govern + ment=政府;achievement=achieve + ment=成就;argument=argue + ment=争论"],
+["suffix","-ness","性质，状态","happiness=happy + ness=幸福;darkness=dark + ness=黑暗;kindness=kind + ness=善良;weakness=weak + ness=弱点"],
+["suffix","-ful","充满……的","useful=use + ful=有用的;helpful=help + ful=有帮助的;beautiful=beauty + ful=美丽的;powerful=power + ful=强大的"],
+["suffix","-less","无……的","hopeless=hope + less=无望的;careless=care + less=粗心的;homeless=home + less=无家可归的;useless=use + less=无用的"],
+["suffix","-ly","副词后缀","quickly=quick + ly=迅速地;carefully=careful + ly=仔细地;finally=final + ly=最后;really=real + ly=确实"]
 ];
 
 var ROOTS = [];
@@ -425,14 +568,10 @@ var ROOT_MAP = {};
   }
 })();
 
-/* ===== 示例词库 ===== */
 var RAW = [
 ["abandon","/əˈbændən/","v. / n.","放弃，抛弃|遗弃，离弃|放纵","","","","","","","","cet6,kaoyan,core,high",95],
 ["adapt","/əˈdæpt/","v.","适应|改编，改写","","","","","","","","cet6,kaoyan,core,high",88],
 ["affect","/əˈfekt/","v.","影响|（疾病）侵袭|感动","","","","","","","","cet6,kaoyan,core,high",92],
-["predict","/prɪˈdɪkt/","v.","预言，预测","","","","","","","","cet6,kaoyan,core,high",88],
-["prepare","/prɪˈpeə(r)/","v.","准备","","","","","","","","cet6,kaoyan,core,high",90],
-["prevent","/prɪˈvent/","v.","阻止，预防","","","","","","","","cet6,kaoyan,core,high",89],
 ["available","/əˈveɪləbl/","adj.","可获得的，可用的|有空的","","","","","","","","cet6,kaoyan,core,high",90],
 ["capable","/ˈkeɪpəbl/","adj.","有能力的，能干的|能够……的","","","","","","","","cet6,kaoyan,core,high",84],
 ["consist","/kənˈsɪst/","v.","由……组成|在于","","","","","","","","cet6,kaoyan,core,high",83],
@@ -469,13 +608,11 @@ var BOOKS = {all:{name:"全部词库",fn:null},cet6:{name:"六级完整词库",f
 function safeParse(key,fallback){try{var v=localStorage.getItem(key);if(!v)return fallback;var r=JSON.parse(v);return r||fallback;}catch(e){return fallback;}}
 function safeSave(key,val){try{localStorage.setItem(key,JSON.stringify(val));return true;}catch(e){return false;}}
 
-/* ===== 日期工具 ===== */
 function pad2(n){return n<10?"0"+n:""+n;}
 function parseDate(s){var a=s.split("-");return new Date(+a[0],+a[1]-1,+a[2]);}
 function todayStr(){var d=new Date();return d.getFullYear()+"-"+pad2(d.getMonth()+1)+"-"+pad2(d.getDate());}
 function dateAdd(dateStr,days){var d=parseDate(dateStr);d.setDate(d.getDate()+days);return d.getFullYear()+"-"+pad2(d.getMonth()+1)+"-"+pad2(d.getDate());}
 
-/* ===== 复习数据 ===== */
 var REVIEW_INTERVALS = {1:1,2:3,3:7,4:15,5:30,6:365};
 var reviewData = safeParse("review_data_v1",{});
 var stats = safeParse("stats_v1",{lastDate:"",streak:0,todayCount:0,todayDate:""});
@@ -503,8 +640,9 @@ function getDueWords(){
     if(!reviewData.hasOwnProperty(k))continue;
     var d = reviewData[k];
     if(d.level < 6 && d.next && d.next <= today){
-      var w = WORD_MAP[Object.keys(WORD_MAP).find(function(x){return x.toLowerCase()===k;})];
-      if(w)due.push(w);
+      var realKey = null;
+      for(var kk in WORD_MAP){if(kk.toLowerCase()===k){realKey = kk; break;}}
+      if(realKey)due.push(WORD_MAP[realKey]);
     }
   }
   due.sort(function(a,b){
@@ -526,7 +664,59 @@ function renderStats(){
   document.getElementById("reviewSub").textContent = "今天 " + dueCount + " 个";
 }
 
-/* ===== 主题 ===== */
+var SESSION_KEY = "session_v1";
+var SESSION_MAX_AGE = 7 * 24 * 60 * 60 * 1000;
+
+function saveSession(){
+  if(!S.cur || S.finished){
+    if(S.finished) safeSave(SESSION_KEY, null);
+    return;
+  }
+  try{
+    var session = {
+      ts: Date.now(),
+      mode: S.mode,
+      total: S.total,
+      mastered: S.mastered,
+      newUnknown: S.newUnknown,
+      revealed: S.revealed,
+      curWord: S.cur.word,
+      queueWords: S.queue.map(function(w){return w.word;}),
+      showCounts: {},
+      history: []
+    };
+    for(var wi=0; wi<WORDS.length; wi++){
+      if(WORDS[wi]._showCount) session.showCounts[WORDS[wi].word] = WORDS[wi]._showCount;
+    }
+    for(var hi=0; hi<S.history.length; hi++){
+      var h = S.history[hi];
+      session.history.push({
+        word: h.word,
+        queueBefore: h.queueBefore.map(function(w){return w.word;}),
+        masteredBefore: h.masteredBefore,
+        addedToUnknown: h.addedToUnknown,
+        wasInUnknown: h.wasInUnknown,
+        showCountBefore: h.showCountBefore,
+        reviewBefore: h.reviewBefore,
+        firstTime: h.firstTime
+      });
+    }
+    safeSave(SESSION_KEY, session);
+  }catch(e){}
+}
+function clearSession(){try{localStorage.removeItem(SESSION_KEY);}catch(e){}}
+
+function hasPendingSession(){
+  if(S.cur && !S.finished) return true;
+  var s = safeParse(SESSION_KEY, null);
+  return !!(s && s.curWord);
+}
+function getPendingMode(){
+  if(S.cur && !S.finished) return S.mode;
+  var s = safeParse(SESSION_KEY, null);
+  return s ? s.mode : null;
+}
+
 function applyTheme(isDark){
   if(isDark){document.body.classList.add("dark");}
   else{document.body.classList.remove("dark");}
@@ -540,6 +730,33 @@ document.getElementById("themeSwitch").onclick=function(){
   var saved=safeParse("theme_dark",false);
   if(saved===true||saved==="true")applyTheme(true);
 })();
+
+function renderChangelog(){
+  var box = document.getElementById("changelogContent");
+  var html = "";
+  for(var i=0;i<CHANGELOG.length;i++){
+    var v = CHANGELOG[i];
+    html += '<div class="log-version">'+v.version+'</div>';
+    html += '<div class="log-date">'+v.date+'</div>';
+    html += '<ul class="log-items">';
+    for(var j=0;j<v.items.length;j++){
+      html += '<li>'+v.items[j]+'</li>';
+    }
+    html += '</ul>';
+  }
+  box.innerHTML = html;
+}
+document.getElementById("versionFooter").textContent = APP_VERSION;
+document.getElementById("versionFooter").onclick = function(){
+  renderChangelog();
+  document.getElementById("changelogModal").classList.add("show");
+};
+document.getElementById("changelogClose").onclick = function(){
+  document.getElementById("changelogModal").classList.remove("show");
+};
+document.getElementById("changelogModal").onclick = function(e){
+  if(e.target === this) this.classList.remove("show");
+};
 
 function fetchSynAnt(word,cb){
   var key=word.toLowerCase();
@@ -584,7 +801,6 @@ function _stopAll(){
   if(window._curAudio){try{window._curAudio.pause();}catch(e){}window._curAudio=null;}
   if(window.speechSynthesis)speechSynthesis.cancel();
 }
-
 function speakWord(w){
   if(!w)return;
   _stopAll();
@@ -677,6 +893,27 @@ function addCurrentToQueue(){
   S.queue.unshift(w);S.total++;showToast("已加入本轮");exitViewMode();
 }
 
+function updateMainButtons(){
+  var pendingMode = getPendingMode();
+  var studyTitle = document.getElementById("studyTitle");
+  var reviewTitle = document.getElementById("reviewTitle");
+  var studySub = document.getElementById("studySub");
+  var reviewSub = document.getElementById("reviewSub");
+
+  if(pendingMode === "study" && S.cur && !S.finished){
+    studyTitle.textContent = "继续背诵";
+    studySub.textContent = S.mastered + " / " + S.total;
+  } else {
+    studyTitle.textContent = "背诵";
+    studySub.textContent = "新词";
+  }
+  if(pendingMode === "review" && S.cur && !S.finished){
+    reviewTitle.textContent = "继续复习";
+  } else {
+    reviewTitle.textContent = "复习";
+  }
+}
+
 function renderHome(){
   var bc=document.getElementById("bookChips");
   var html="";
@@ -698,6 +935,7 @@ function renderHome(){
   var scs=document.getElementById("sizeChips").querySelectorAll(".chip");
   for(var m=0;m<scs.length;m++){scs[m].classList.toggle("on",+scs[m].dataset.v===S.size);scs[m].onclick=function(){S.size=+this.dataset.v;renderHome();};}
   renderStats();
+  updateMainButtons();
 }
 
 function getBookList(){
@@ -708,6 +946,7 @@ function getBookList(){
 }
 
 function startStudy(){
+  clearSession();
   var list=getBookList();
   if(!list.length){alert("该词库暂无单词");return;}
   if(S.order==="alpha")list.sort(function(a,b){return a.word.localeCompare(b.word);});
@@ -721,6 +960,7 @@ function startStudy(){
 }
 
 function startReview(){
+  clearSession();
   var due=getDueWords();
   if(!due.length){showToast("今天没有要复习的词");return;}
   S.queue=due.slice();
@@ -859,8 +1099,16 @@ function renderForms(w){
   h+='</div></div>';return h;
 }
 
+/* 优先用 GPT4 词根分析；没有则用手写的 ROOT_MAP */
 function renderRootForWord(w){
-  var info = ROOT_MAP[w.word.toLowerCase()];
+  var key = w.word.toLowerCase();
+  // 优先 GPT4 数据
+  if(ROOTS_GPT[key]){
+    var txt = ROOTS_GPT[key];
+    return '<div class="root-word-note">' + esc(txt) + '</div>';
+  }
+  // 手写数据兜底
+  var info = ROOT_MAP[key];
   if(!info) return "";
   var h = '<div class="root-line"><span class="root-name">'+esc(info.root)+'</span><span class="root-mean">'+esc(info.meaning)+'</span></div>';
   h += '<div style="font-size:13px;color:var(--text-main);font-family:\'SF Mono\',Menlo,monospace;margin-top:4px">'+esc(info.split)+'</div>';
@@ -879,7 +1127,10 @@ function renderCard(){
     hf+="<p>共掌握 <b>"+S.total+"</b> 个单词</p>";
     hf+="<p>生词本新增 "+S.newUnknown+" 个</p></div>";
     hf+='<button class="btn-primary" data-act="home">返回首页</button>';
-    area.innerHTML=hf;return;
+    area.innerHTML=hf;
+    clearSession();
+    updateMainButtons();
+    return;
   }
   var w=S.cur;if(!w){area.innerHTML="";return;}
   var out="";
@@ -964,6 +1215,7 @@ function renderCard(){
   }
   area.innerHTML=out;
   enrichCurrentWithDM();
+  saveSession();
 }
 
 function renderRoots(){
@@ -1281,13 +1533,35 @@ function loadImportedWords(){
   for(var i=0;i<list.length;i++){var w=list[i];if(!w||!w.word)continue;if(!WORD_MAP[w.word])addWord(w);}
 }
 
-window.addEventListener("beforeunload",saveImportedWords);
-document.addEventListener("visibilitychange",function(){if(document.visibilityState==="hidden")saveImportedWords();});
+window.addEventListener("beforeunload",function(){saveImportedWords();saveSession();});
+document.addEventListener("visibilitychange",function(){
+  if(document.visibilityState==="hidden"){saveImportedWords();saveSession();}
+});
 
-document.getElementById("btnStudy").onclick=startStudy;
-document.getElementById("btnReview").onclick=startReview;
-document.getElementById("btnBack").onclick=function(){_stopAll();VIEW_MODE=false;VIEW_STACK=[];show("home");renderHome();};
-document.getElementById("btnRestart").onclick=function(){_stopAll();if(S.mode==="review")startReview();else startStudy();};
+document.getElementById("btnStudy").onclick=function(){
+  if(S.cur && !S.finished && S.mode==="study"){
+    show("study");renderCard();
+    if(S.cur && !S.revealed)speakWord(S.cur.word);
+  } else {
+    startStudy();
+  }
+};
+document.getElementById("btnReview").onclick=function(){
+  if(S.cur && !S.finished && S.mode==="review"){
+    show("study");renderCard();
+    if(S.cur && !S.revealed)speakWord(S.cur.word);
+  } else {
+    startReview();
+  }
+};
+document.getElementById("btnBack").onclick=function(){
+  _stopAll();VIEW_MODE=false;VIEW_STACK=[];
+  show("home");renderHome();
+};
+document.getElementById("btnRestart").onclick=function(){
+  _stopAll();
+  if(S.mode==="review")startReview();else startStudy();
+};
 document.getElementById("btnBack2").onclick=function(){show("home");renderHome();};
 document.getElementById("btnNote").onclick=function(){renderNote();show("note");};
 document.getElementById("btnRoots").onclick=function(){renderRoots();show("root");};
@@ -1301,6 +1575,43 @@ window.addEventListener("resize",hidePopup);
 
 FORMS_MAP=safeParse("word_forms_v1",{});
 loadImportedWords();
+
+(function tryRestore(){
+  var s = safeParse(SESSION_KEY, null);
+  if(!s || !s.curWord) return;
+  if(Date.now() - (s.ts||0) > SESSION_MAX_AGE){clearSession(); return;}
+  var cur = WORD_MAP[s.curWord];
+  if(!cur){clearSession(); return;}
+  var queue = [];
+  for(var i=0;i<(s.queueWords||[]).length;i++){
+    var w = WORD_MAP[s.queueWords[i]];
+    if(w)queue.push(w);
+  }
+  if(s.showCounts){
+    for(var k in s.showCounts){
+      if(WORD_MAP[k])WORD_MAP[k]._showCount = s.showCounts[k];
+    }
+  }
+  var history = [];
+  for(var j=0;j<(s.history||[]).length;j++){
+    var h = s.history[j];
+    var hw = WORD_MAP[h.word]; if(!hw) continue;
+    var qb = [];
+    for(var m=0;m<(h.queueBefore||[]).length;m++){
+      var ww = WORD_MAP[h.queueBefore[m]];
+      if(ww)qb.push(ww);
+    }
+    history.push({
+      word: h.word, queueBefore: qb, masteredBefore: h.masteredBefore,
+      addedToUnknown: h.addedToUnknown, wasInUnknown: h.wasInUnknown,
+      showCountBefore: h.showCountBefore, reviewBefore: h.reviewBefore, firstTime: h.firstTime
+    });
+  }
+  S.mode = s.mode; S.total = s.total; S.mastered = s.mastered;
+  S.newUnknown = s.newUnknown; S.revealed = s.revealed;
+  S.cur = cur; S.queue = queue; S.history = history; S.finished = false;
+})();
+
 renderHome();
 
 (function autoLoadVocab(){
@@ -1317,6 +1628,26 @@ renderHome();
       for(var i=0;i<data.length;i++){var o=parseItem(data[i]);if(o.word&&!WORD_MAP[o.word]){addWord(o);added++;}}
       if(added>0){renderHome();console.log("自动加载词库："+added+" 个");}
     }catch(e){console.log("vocab.json 解析失败",e);}
+  };
+  xhr.send();
+})();
+
+/* 自动加载 roots.json（GPT4 词根数据） */
+(function autoLoadRoots(){
+  if(location.protocol==="file:")return;
+  var xhr=new XMLHttpRequest();
+  xhr.open("GET","roots.json?_="+Date.now(),true);
+  xhr.onreadystatechange=function(){
+    if(xhr.readyState!==4)return;
+    if(xhr.status!==200){console.log("未找到 roots.json（可选）");return;}
+    try{
+      var data=JSON.parse(xhr.responseText);
+      if(typeof data!=="object"||Array.isArray(data))return;
+      var count=0;
+      for(var k in data){if(data.hasOwnProperty(k)){ROOTS_GPT[k]=data[k];count++;}}
+      console.log("自动加载 GPT4 词根数据："+count+" 个词");
+      if(S.cur && S.revealed) renderCard();
+    }catch(e){console.log("roots.json 解析失败",e);}
   };
   xhr.send();
 })();
