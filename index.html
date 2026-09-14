@@ -38,6 +38,22 @@ body{font-family:-apple-system,"PingFang SC","Microsoft YaHei",sans-serif;backgr
 body.dark .theme-slider{transform:translateX(32px)}
 .theme-icon{position:relative;z-index:2;font-size:13px;line-height:1;user-select:none}
 
+/* 统计卡片 */
+.stats-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:14px}
+.stat-card{background:var(--card-bg);border:1px solid var(--border);border-radius:14px;padding:12px 14px;box-shadow:0 2px 4px rgba(0,0,0,.03)}
+.stat-label{font-size:11px;color:var(--text-sub);letter-spacing:.5px;margin-bottom:4px}
+.stat-value{font-size:22px;font-weight:800;color:var(--primary);line-height:1.2}
+.stat-value small{font-size:12px;color:var(--text-sub);font-weight:500;margin-left:2px}
+
+/* 双按钮 */
+.main-actions{display:flex;gap:10px;margin-bottom:14px}
+.btn-half{flex:1;padding:16px 12px;border:none;border-radius:var(--radius);font-size:16px;font-weight:700;cursor:pointer;font-family:inherit;transition:.2s;position:relative;color:#fff}
+.btn-half:active{transform:scale(.97)}
+.btn-review{background:linear-gradient(135deg,#F59E0B,#D97706);box-shadow:0 4px 12px rgba(245,158,11,.3)}
+.btn-study{background:var(--btn-primary-bg);box-shadow:var(--btn-primary-shadow)}
+.btn-half-title{display:block;font-size:16px;font-weight:800}
+.btn-half-sub{display:block;font-size:11px;font-weight:500;opacity:.85;margin-top:2px;letter-spacing:.5px}
+
 .search-wrap{position:relative;margin-bottom:14px}
 .search-box{width:100%;padding:14px 44px 14px 16px;background:var(--card-bg);border:1px solid var(--border);border-radius:var(--radius);color:var(--text-main);font-size:15px;font-family:inherit;outline:none;transition:.18s}
 .search-box:focus{border-color:var(--primary);box-shadow:0 0 0 3px var(--primary-light)}
@@ -126,6 +142,28 @@ body.dark .gram{background:#2a2410;border-color:#4a3d15;color:#ffd77a}
 .conf-item{padding:9px 0;border-bottom:1px dashed var(--border)}
 .conf-item:last-child{border-bottom:none}
 
+.root-line{display:flex;align-items:baseline;gap:8px;flex-wrap:wrap;margin-bottom:6px}
+.root-name{font-size:16px;font-weight:800;color:var(--primary);font-family:"SF Mono",Menlo,monospace}
+.root-mean{font-size:13px;color:var(--text-main)}
+.root-word-note{font-size:12.5px;color:var(--text-main);margin-top:3px}
+
+.root-group-title{font-size:13px;font-weight:700;color:var(--primary);padding:14px 0 6px;letter-spacing:.5px}
+.root-card{background:var(--card-bg);border:1px solid var(--border);border-radius:12px;margin-bottom:8px;overflow:hidden}
+.root-card-head{padding:12px 14px;cursor:pointer;display:flex;justify-content:space-between;align-items:center;transition:.15s}
+.root-card-head:hover{background:var(--primary-light)}
+.root-card-head-left{display:flex;align-items:baseline;gap:10px;flex-wrap:wrap}
+.root-card-name{font-size:15px;font-weight:800;color:var(--primary);font-family:"SF Mono",Menlo,monospace}
+.root-card-mean{font-size:12.5px;color:var(--text-sub)}
+.root-card-arrow{font-size:11px;color:var(--text-sub);opacity:.6;transition:transform .2s}
+.root-card.open .root-card-arrow{transform:rotate(180deg)}
+.root-card-body{display:none;padding:0 14px 14px}
+.root-card.open .root-card-body{display:block}
+.root-word{background:var(--card-bg);border:1px solid var(--border);border-radius:9px;padding:9px 12px;margin-bottom:6px;cursor:pointer;transition:.15s}
+.root-word:hover{background:var(--primary-light);border-color:var(--primary)}
+.root-word-line{display:flex;justify-content:space-between;align-items:baseline;gap:8px;flex-wrap:wrap}
+.root-word-en{font-size:14px;font-weight:700;color:var(--primary);font-family:"SF Mono",Menlo,monospace}
+.root-word-split{font-size:12px;color:var(--text-sub);font-family:"SF Mono",Menlo,monospace}
+
 .actions{display:flex;gap:10px}
 .btn-rate{flex:1;padding:17px 6px;border:none;border-radius:14px;font-size:15px;font-weight:700;cursor:pointer;font-family:inherit;transition:.18s;color:#fff}
 .btn-rate:active{transform:scale(.97)}
@@ -178,6 +216,7 @@ body.dark .gram{background:#2a2410;border-color:#4a3d15;color:#ffd77a}
   .word-en{font-size:30px}
   .card{padding:22px 16px}
   .btn-rate{font-size:14px;padding:16px 4px}
+  .stat-value{font-size:19px}
 }
 </style>
 </head>
@@ -194,6 +233,36 @@ body.dark .gram{background:#2a2410;border-color:#4a3d15;color:#ffd77a}
     </button>
   </div>
 
+  <div class="stats-grid">
+    <div class="stat-card">
+      <div class="stat-label">已掌握</div>
+      <div class="stat-value" id="stMastered">0<small>词</small></div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-label">今日已学</div>
+      <div class="stat-value" id="stToday">0<small>词</small></div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-label">连续学习</div>
+      <div class="stat-value" id="stStreak">0<small>天</small></div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-label">今日待复习</div>
+      <div class="stat-value" id="stDue">0<small>词</small></div>
+    </div>
+  </div>
+
+  <div class="main-actions">
+    <button class="btn-half btn-review" id="btnReview">
+      <span class="btn-half-title">复习</span>
+      <span class="btn-half-sub" id="reviewSub">今天 0 个</span>
+    </button>
+    <button class="btn-half btn-study" id="btnStudy">
+      <span class="btn-half-title">背诵</span>
+      <span class="btn-half-sub">新词</span>
+    </button>
+  </div>
+
   <div class="search-wrap">
     <input type="text" class="search-box" id="searchBox" placeholder="搜索单词…" autocomplete="off">
     <span class="search-icon">&#128269;</span>
@@ -207,7 +276,7 @@ body.dark .gram{background:#2a2410;border-color:#4a3d15;color:#ffd77a}
     <button class="chip" data-v="alpha">A-Z 字母序</button>
     <button class="chip" data-v="freq">高频优先</button>
   </div></div>
-  <div class="panel"><div class="label">本轮单词数</div><div class="chips" id="sizeChips">
+  <div class="panel"><div class="label">每轮新词数</div><div class="chips" id="sizeChips">
     <button class="chip" data-v="10">10</button>
     <button class="chip on" data-v="20">20</button>
     <button class="chip" data-v="30">30</button>
@@ -215,8 +284,8 @@ body.dark .gram{background:#2a2410;border-color:#4a3d15;color:#ffd77a}
     <button class="chip" data-v="100">100</button>
     <button class="chip" data-v="9999">全部</button>
   </div></div>
-  <button class="btn-primary" id="btnStart">开始背诵</button>
   <div class="row-links">
+    <button class="link" id="btnRoots">词根词缀</button>
     <button class="link" id="btnNote">生词本<span id="noteCount"> 0</span></button>
     <button class="link" id="btnForms">补全单词用法</button>
     <button class="link" id="btnExportForms">导出词形数据</button>
@@ -260,22 +329,116 @@ body.dark .gram{background:#2a2410;border-color:#4a3d15;color:#ffd77a}
   <div id="noteList"></div>
 </div>
 
+<div id="page-root" class="page">
+  <div class="topbar">
+    <button class="icon-btn" id="btnBack3">&larr;</button>
+    <div class="title">词根词缀</div>
+    <button class="icon-btn" id="btnRootTop">↑</button>
+  </div>
+  <div id="rootList"></div>
+</div>
+
 <div id="popup" class="popup"></div>
 
 <script>
+/* ===== 词根词缀数据 ===== */
+var ROOT_DATA = [
+["prefix","pre-","前，预先","predict=pre + dict(说)=提前说 → 预言;prepare=pre + pare(准备)=提前弄好 → 准备;prevent=pre + vent(来)=先来一步 → 阻止;preview=pre + view(看)=提前看 → 预览;previous=pre + vi(路) + ous=走在前面 → 以前的"],
+["prefix","post-","后","postpone=post + pone(放)=往后放 → 推迟;postwar=post + war=战后的;posterior=post + erior=后面的;postgraduate=post + graduate=大学毕业后 → 研究生"],
+["prefix","re-","再，回","return=re + turn(转)=转回来 → 返回;review=re + view(看)=再看 → 复习;repeat=re + peat(请求)=再次请求 → 重复;recall=re + call(叫)=叫回 → 回忆;rebuild=re + build=重建"],
+["prefix","un-","不，相反","unhappy=un + happy=不开心;unable=un + able=不能的;unknown=un + known=未知的;unlock=un + lock=开锁;unusual=un + usual=不寻常的"],
+["prefix","dis-","不，分开","disagree=dis + agree=不同意;disappear=dis + appear=消失;discover=dis + cover=揭开盖子 → 发现;disorder=dis + order=无秩序 → 混乱;discount=dis + count=不算 → 折扣"],
+["prefix","im- / in-","不 / 进入","impossible=im + possible=不可能的;impatient=im + patient=不耐烦的;incorrect=in + correct=不正确的;invisible=in + visible=看不见的;import=im + port(带)=带进来 → 进口"],
+["prefix","mis-","错，误","mistake=mis + take(拿)=拿错 → 错误;misunderstand=mis + understand=误解;mislead=mis + lead(引导)=误导;misuse=mis + use=误用"],
+["prefix","over-","过度，越过","overcome=over + come=从上面过来 → 克服;overlook=over + look=从上面看 → 忽略;overwork=over + work=过度工作;overseas=over + seas=海外的"],
+["prefix","under-","下，不足","understand=under + stand(站)=站在下面 → 理解;underground=under + ground=地下;underestimate=under + estimate=低估;underwear=under + wear=内衣"],
+["prefix","sub-","下，次","subway=sub + way=下面的路 → 地铁;submarine=sub + marine(海)=海底的;submit=sub + mit(送)=送到下面 → 提交，屈服;substance=sub + stance(站)=站在下面的东西 → 物质"],
+["prefix","super-","超，上","supermarket=super + market=超级市场;supervise=super + vis(看)=从上面看 → 监督;superior=super + ior=更好的，上级的;supernatural=super + natural=超自然的"],
+["prefix","trans-","跨越，转","transport=trans + port(带)=从这带到那 → 运输;transform=trans + form(形)=变形;translate=trans + late(带)=从一种语言带到另一种 → 翻译;transmit=trans + mit(送)=传送"],
+["prefix","inter-","之间，相互","international=inter + national=国家之间的 → 国际的;internet=inter + net=网络之间的 → 互联网;interrupt=inter + rupt(断)=中间断开 → 打断;interview=inter + view=互相看 → 面试"],
+["prefix","con- / com-","共同，一起","connect=con + nect(绑)=绑在一起 → 连接;combine=com + bine(二)=合二为一 → 结合;confirm=con + firm(坚固)=使坚固 → 确认;company=com + pan(面包) + y=一起吃面包的人 → 公司"],
+["prefix","ex-","出，向外","exit=ex + it(走)=走出去 → 出口;export=ex + port(带)=带出去 → 出口;exclude=ex + clude(关)=关在外面 → 排除;expand=ex + pand(展开)=向外展开 → 扩张"],
+
+["root","dict","说","predict=pre + dict=提前说 → 预言;dictate=dict + ate=说 → 命令，听写;dictionary=dict + ion + ary=说话的工具 → 词典;contradict=contra(反) + dict=说反话 → 反驳;verdict=ver(真) + dict=说真话 → 裁决"],
+["root","duct","引导","conduct=con + duct=一起引导 → 指挥，行为;introduce=intro(内) + duce=引导进来 → 介绍;produce=pro(前) + duce=向前引 → 生产;reduce=re(回) + duce=引回 → 减少;educate=e(出) + duc + ate=引导出来 → 教育"],
+["root","fer","拿，带","transfer=trans(越) + fer=带着越过 → 转移;refer=re(回) + fer=带回来 → 提到;prefer=pre(前) + fer=拿到前面 → 更喜欢;offer=of(向) + fer=带向 → 提供;differ=dif(分开) + fer=分开带 → 不同"],
+["root","form","形状","inform=in(入) + form=给形状 → 通知;reform=re + form=重新造形 → 改革;transform=trans + form=变形;uniform=uni(一) + form=一个形状 → 制服，统一的;perform=per(完全) + form=完全造形 → 表演"],
+["root","graph","写，画","photograph=photo(光) + graph=用光写 → 照片;biography=bio(生) + graph + y=写一生 → 传记;geography=geo(地) + graph + y=写大地 → 地理;paragraph=para(旁边) + graph=写在旁边的字 → 段落"],
+["root","ject","投，扔","reject=re(回) + ject=扔回 → 拒绝;project=pro(前) + ject=向前投 → 项目;inject=in(入) + ject=投入 → 注射;object=ob(对面) + ject=扔到对面 → 物体，反对;subject=sub(下) + ject=扔在下面 → 主题，服从"],
+["root","log","说话，学科","biology=bio(生) + logy=研究生命的学问 → 生物学;psychology=psycho(心灵) + logy=心理学;apologize=apo(离开) + log + ize=说话推开 → 道歉;dialogue=dia(之间) + logue=两人之间说话 → 对话"],
+["root","mit / miss","送，派","submit=sub(下) + mit=送到下面 → 提交，屈服;transmit=trans + mit=传送;admit=ad(向) + mit=送向 → 承认，准入;commit=com(一起) + mit=一起送 → 犯罪，承诺;dismiss=dis(分开) + miss=送走 → 解散"],
+["root","mot / mov","移动","motion=mot + ion=移动 → 运动;motivate=mot + iv + ate=使动 → 激励;promote=pro(前) + mote=向前动 → 促进;remove=re(回) + move=移回 → 移除"],
+["root","ped","脚","pedal=ped + al=脚的 → 踏板;pedestrian=ped + estrian(人)=用脚走的人 → 行人;expedition=ex(出) + ped + ition=出去走 → 探险;impede=im(入) + pede=把脚伸进去 → 阻碍"],
+["root","port","带，运","import=im(入) + port=带进来 → 进口;export=ex(出) + port=带出去 → 出口;transport=trans + port=从这带到那 → 运输;support=sup(下) + port=从下面带 → 支撑;report=re(回) + port=带回来 → 报告"],
+["root","pos","放，置","compose=com(一起) + pose=放在一起 → 组成;dispose=dis(分开) + pose=放分开 → 处理;expose=ex(出) + pose=放出去 → 暴露;impose=im(入) + pose=放进去 → 强加;propose=pro(前) + pose=放到前面 → 提议"],
+["root","press","压","express=ex(出) + press=压出来 → 表达;impress=im(入) + press=压进去 → 留下印象;depress=de(下) + press=往下压 → 压抑;compress=com(一起) + press=压在一起 → 压缩;oppress=op(对面) + press=压在对面 → 压迫"],
+["root","scrib / script","写","describe=de(下) + scribe=写下来 → 描述;prescribe=pre(前) + scribe=提前写 → 开药方;subscribe=sub(下) + scribe=在下面写 → 订阅;manuscript=manu(手) + script=手写 → 手稿"],
+["root","spec / spect","看","inspect=in(入) + spect=向里看 → 检查;respect=re(再) + spect=再看 → 尊敬;suspect=su(下) + spect=从下面看 → 怀疑;prospect=pro(前) + spect=向前看 → 前景;spectacle=spect + acle=看的东西 → 景象"],
+["root","struct","建造","construct=con(一起) + struct=一起建造 → 建造;instruct=in(入) + struct=在心中建 → 教导;structure=struct + ure=建筑结果 → 结构;destruct=de(去) + struct=拆掉 → 破坏"],
+["root","tract","拉，拖","attract=at(向) + tract=拉向 → 吸引;contract=con(一起) + tract=拉在一起 → 合同，收缩;extract=ex(出) + tract=拉出 → 提取;distract=dis(分开) + tract=拉分开 → 分散注意力;subtract=sub(下) + tract=从下面拿走 → 减去"],
+["root","ven / vent","来","prevent=pre(前) + vent=先来一步 → 阻止;invent=in(入) + vent=来到 → 发明;convention=con(一起) + vent + ion=一起来 → 会议，惯例;adventure=ad(向) + vent + ure=向前来的事 → 冒险"],
+["root","vert / vers","转","convert=con(一起) + vert=一起转 → 转换;reverse=re(回) + verse=转回 → 反转;divert=di(分开) + vert=转开 → 转移;universe=uni(一) + verse=转成一 → 宇宙;advertise=ad(向) + vert + ise=让（目光）转向 → 广告"],
+["root","vid / vis","看","video=vid + eo=看的东西 → 视频;visible=vis + ible=能看的 → 可见的;provide=pro(前) + vide=提前看到 → 提供;evidence=e(出) + vid + ence=看出来的东西 → 证据;supervise=super + vise=从上面看 → 监督"],
+["root","voc / vok","叫，喊","vocal=voc + al=叫的 → 声音的;vocabulary=voc + abulary=叫出来的词 → 词汇;invoke=in(入) + voke=叫进来 → 祈求;provoke=pro(前) + voke=叫到前面 → 激怒;advocate=ad(向) + voc + ate=为别人喊 → 提倡"],
+["root","cap / cept","拿，取","accept=ac(向) + cept=拿过来 → 接受;capable=cap + able=能拿住的 → 有能力的;capture=cap + ture=抓住 → 捕获;except=ex(出) + cept=拿出来 → 除……之外;concept=con(一起) + cept=一起拿的观念 → 概念"],
+["root","ced / cess","走","proceed=pro(前) + ceed=向前走 → 继续;exceed=ex(出) + ceed=走出界限 → 超过;access=ac(向) + cess=走向 → 通道，访问;success=suc(下) + cess=跟在下面走 → 成功;process=pro(前) + cess=向前走的过程 → 过程"],
+["root","cred","相信","credit=cred + it=相信的东西 → 信用;incredible=in(不) + cred + ible=不可信的 → 难以置信的;credential=cred + ential=证明可信的东西 → 证书"],
+["root","fac / fact","做，造","factory=fact + ory=做东西的地方 → 工厂;fact=做出来的事 → 事实;manufacture=manu(手) + fact + ure=用手做 → 制造;faculty=fac + ulty=能做事的团队 → 全体教员;perfect=per(完全) + fect=完全做好的 → 完美的"],
+["root","grad / gress","步，走","gradual=grad + ual=一步的 → 逐渐的;graduate=grad + uate=走完学业 → 毕业;progress=pro(前) + gress=向前走 → 进步;aggressive=ag(向) + gress + ive=向前走的 → 好斗的，积极的"],
+["root","path","感情，疾病","sympathy=sym(一起) + pathy=一起的感情 → 同情;apathy=a(无) + pathy=无感情 → 冷漠;pathetic=path + etic=感情的 → 可怜的;pathology=path + ology=疾病的学问 → 病理学"],
+["root","phon","声音","telephone=tele(远) + phone=远的声音 → 电话;microphone=micro(小) + phone=把小声音放大 → 麦克风;symphony=sym(一起) + phon + y=一起响的声音 → 交响乐;phonetic=phon + etic=声音的 → 语音的"],
+["root","sens / sent","感觉","sense=sens=感觉;sensation=sens + ation=感觉;sentiment=senti + ment=感情;consent=con(一起) + sent=共同感觉 → 同意;resent=re(再) + sent=再感觉 → 怨恨"],
+["root","vac","空","vacant=vac + ant=空的 → 空的;vacation=vac + ation=空下来的时间 → 假期;vacuum=vac + uum=真空;evacuate=e(出) + vac + uate=把里面弄空 → 疏散"],
+["root","ver","真实","verify=ver + ify=使真实 → 验证;verdict=ver + dict=说真话 → 裁决;veritable=ver + itable=真实的;veracity=ver + acity=真实 → 诚实"],
+
+["suffix","-able / -ible","能……的，可……的","comfortable=comfort + able=能带来舒适的;reliable=rely + able=可以依靠的;possible=poss(能) + ible=可能的;visible=vis + ible=可看见的;valuable=value + able=有价值的"],
+["suffix","-ance / -ence","状态，性质","importance=import + ance=重要性;difference=differ + ence=不同;performance=perform + ance=表演，表现;confidence=confide + ence=自信"],
+["suffix","-ate","使……，做……","activate=act + ivate=使活跃;celebrate=celebr + ate=庆祝;communicate=commun + icate=交流;demonstrate=demonstr + ate=演示"],
+["suffix","-er / -or","做……的人或物","teacher=teach + er=教师;worker=work + er=工人;actor=act + or=演员;visitor=visit + or=访问者;editor=edit + or=编辑"],
+["suffix","-ify","使……","simplify=simple + ify=简化;classify=class + ify=分类;identify=ident + ify=识别;purify=pure + ify=净化"],
+["suffix","-ity","性质，状态","ability=able + ity=能力;activity=active + ity=活动;quality=qual + ity=质量;reality=real + ity=现实;curiosity=curious + ity=好奇心"],
+["suffix","-ive","……的，有……性质的","active=act + ive=活跃的;creative=create + ive=有创造力的;effective=effect + ive=有效的;expensive=expense + ive=昂贵的"],
+["suffix","-ize / -ise","使……化","realize=real + ize=实现;organize=organ + ize=组织;modernize=modern + ize=现代化;apologize=apology + ize=道歉"],
+["suffix","-tion / -sion","名词后缀","information=inform + ation=信息;education=educate + ion=教育;decision=decide + sion=决定;discussion=discuss + ion=讨论"],
+["suffix","-ous","多……的，有……性质的","famous=fame + ous=有名的;dangerous=danger + ous=危险的;curious=cur + ious=好奇的;generous=gener + ous=慷慨的"]
+];
+
+var ROOTS = [];
+var ROOT_MAP = {};
+(function(){
+  for(var i=0;i<ROOT_DATA.length;i++){
+    var row = ROOT_DATA[i];
+    var type = row[0], root = row[1], meaning = row[2], wordsRaw = row[3]||"";
+    var words = [];
+    var parts = wordsRaw.split(";");
+    for(var j=0;j<parts.length;j++){
+      var p = parts[j].trim();
+      if(!p) continue;
+      var segs = p.split("=");
+      if(segs.length < 3) continue;
+      var w = {w:segs[0].trim(), split:segs[1].trim(), note:segs[2].trim()};
+      words.push(w);
+      var key = w.w.toLowerCase();
+      if(!ROOT_MAP[key]) ROOT_MAP[key] = {root:root, meaning:meaning, type:type, split:w.split, note:w.note};
+    }
+    ROOTS.push({type:type, root:root, meaning:meaning, words:words});
+  }
+})();
+
+/* ===== 示例词库 ===== */
 var RAW = [
 ["abandon","/əˈbændən/","v. / n.","放弃，抛弃|遗弃，离弃|放纵","","","","","","","","cet6,kaoyan,core,high",95],
 ["adapt","/əˈdæpt/","v.","适应|改编，改写","","","","","","","","cet6,kaoyan,core,high",88],
 ["affect","/əˈfekt/","v.","影响|（疾病）侵袭|感动","","","","","","","","cet6,kaoyan,core,high",92],
-["appreciate","/əˈpriːʃieɪt/","v.","感激，感谢|欣赏，赏识|理解","","","","","","","","cet6,kaoyan,core,high",86],
-["assume","/əˈsjuːm/","v.","假定，假设|承担（责任）|呈现","","","","","","","","cet6,kaoyan,core,high",86],
+["predict","/prɪˈdɪkt/","v.","预言，预测","","","","","","","","cet6,kaoyan,core,high",88],
+["prepare","/prɪˈpeə(r)/","v.","准备","","","","","","","","cet6,kaoyan,core,high",90],
+["prevent","/prɪˈvent/","v.","阻止，预防","","","","","","","","cet6,kaoyan,core,high",89],
 ["available","/əˈveɪləbl/","adj.","可获得的，可用的|有空的","","","","","","","","cet6,kaoyan,core,high",90],
 ["capable","/ˈkeɪpəbl/","adj.","有能力的，能干的|能够……的","","","","","","","","cet6,kaoyan,core,high",84],
 ["consist","/kənˈsɪst/","v.","由……组成|在于","","","","","","","","cet6,kaoyan,core,high",83],
 ["contribute","/kənˈtrɪbjuːt/","v.","贡献，捐献|促成，导致","","","","","","","","cet6,kaoyan,core,high",86],
 ["decline","/dɪˈklaɪn/","v. / n.","下降，衰退|婉拒","","","","","","","","cet6,kaoyan,core,high",85],
-["deny","/dɪˈnaɪ/","v.","否认，否定|拒绝给予","","","","","","","","cet6,kaoyan,core,high",85],
-["emerge","/ɪˈmɜːdʒ/","v.","出现，浮现|显露","","","","","","","","cet6,kaoyan,core,high",84]
+["deny","/dɪˈnaɪ/","v.","否认，否定|拒绝给予","","","","","","","","cet6,kaoyan,core,high",85]
 ];
 
 var WORDS = [];
@@ -284,7 +447,6 @@ var FORMS_MAP = {};
 var DM_CACHE = {};
 var VIEW_MODE = false;
 var VIEW_STACK = [];
-var _ttsUnlocked = false;
 
 function addWord(o){
   if(!o||!o.word)return false;
@@ -307,6 +469,64 @@ var BOOKS = {all:{name:"全部词库",fn:null},cet6:{name:"六级完整词库",f
 function safeParse(key,fallback){try{var v=localStorage.getItem(key);if(!v)return fallback;var r=JSON.parse(v);return r||fallback;}catch(e){return fallback;}}
 function safeSave(key,val){try{localStorage.setItem(key,JSON.stringify(val));return true;}catch(e){return false;}}
 
+/* ===== 日期工具 ===== */
+function pad2(n){return n<10?"0"+n:""+n;}
+function parseDate(s){var a=s.split("-");return new Date(+a[0],+a[1]-1,+a[2]);}
+function todayStr(){var d=new Date();return d.getFullYear()+"-"+pad2(d.getMonth()+1)+"-"+pad2(d.getDate());}
+function dateAdd(dateStr,days){var d=parseDate(dateStr);d.setDate(d.getDate()+days);return d.getFullYear()+"-"+pad2(d.getMonth()+1)+"-"+pad2(d.getDate());}
+
+/* ===== 复习数据 ===== */
+var REVIEW_INTERVALS = {1:1,2:3,3:7,4:15,5:30,6:365};
+var reviewData = safeParse("review_data_v1",{});
+var stats = safeParse("stats_v1",{lastDate:"",streak:0,todayCount:0,todayDate:""});
+
+function updateStatsOnLearn(){
+  var today = todayStr();
+  if(stats.todayDate !== today){stats.todayDate = today;stats.todayCount = 0;}
+  stats.todayCount++;
+  if(stats.lastDate !== today){
+    if(stats.lastDate === ""){stats.streak = 1;}
+    else{
+      var diff = Math.round((parseDate(today) - parseDate(stats.lastDate))/86400000);
+      if(diff === 1)stats.streak++;
+      else if(diff > 1)stats.streak = 1;
+    }
+    stats.lastDate = today;
+  }
+  safeSave("stats_v1",stats);
+}
+
+function getDueWords(){
+  var today = todayStr();
+  var due = [];
+  for(var k in reviewData){
+    if(!reviewData.hasOwnProperty(k))continue;
+    var d = reviewData[k];
+    if(d.level < 6 && d.next && d.next <= today){
+      var w = WORD_MAP[Object.keys(WORD_MAP).find(function(x){return x.toLowerCase()===k;})];
+      if(w)due.push(w);
+    }
+  }
+  due.sort(function(a,b){
+    var la = reviewData[a.word.toLowerCase()] ? reviewData[a.word.toLowerCase()].level : 1;
+    var lb = reviewData[b.word.toLowerCase()] ? reviewData[b.word.toLowerCase()].level : 1;
+    return la - lb;
+  });
+  return due;
+}
+
+function renderStats(){
+  document.getElementById("stMastered").innerHTML = Object.keys(reviewData).length + '<small>词</small>';
+  var today = todayStr();
+  var tc = (stats.todayDate === today) ? stats.todayCount : 0;
+  document.getElementById("stToday").innerHTML = tc + '<small>词</small>';
+  document.getElementById("stStreak").innerHTML = (stats.streak||0) + '<small>天</small>';
+  var dueCount = getDueWords().length;
+  document.getElementById("stDue").innerHTML = dueCount + '<small>词</small>';
+  document.getElementById("reviewSub").textContent = "今天 " + dueCount + " 个";
+}
+
+/* ===== 主题 ===== */
 function applyTheme(isDark){
   if(isDark){document.body.classList.add("dark");}
   else{document.body.classList.remove("dark");}
@@ -349,7 +569,7 @@ function enrichCurrentWithDM(){
   });
 }
 
-var S = {book:"all",order:"random",size:20,queue:[],total:0,mastered:0,cur:null,revealed:false,finished:false,newUnknown:0,history:[],unknown:safeParse("vocab_unknown",[])};
+var S = {book:"all",order:"random",size:20,queue:[],total:0,mastered:0,cur:null,revealed:false,finished:false,newUnknown:0,history:[],mode:"study",unknown:safeParse("vocab_unknown",[])};
 
 var voice=null;
 function pickVoice(){
@@ -359,16 +579,6 @@ function pickVoice(){
   if(!voice){for(var j=0;j<vs.length;j++){if(/^en/i.test(vs[j].lang)){voice=vs[j];break;}}}
 }
 if(window.speechSynthesis){speechSynthesis.onvoiceschanged=pickVoice;pickVoice();}
-
-function unlockTTS(){
-  if(_ttsUnlocked||!window.speechSynthesis)return;
-  _ttsUnlocked=true;
-  try{
-    var u=new SpeechSynthesisUtterance(" ");
-    u.volume=0;u.rate=2;
-    speechSynthesis.speak(u);
-  }catch(e){}
-}
 
 function _stopAll(){
   if(window._curAudio){try{window._curAudio.pause();}catch(e){}window._curAudio=null;}
@@ -390,7 +600,6 @@ function speakWord(w){
     }
   });
 }
-
 function speakExample(ex){
   if(!ex)return;
   _stopAll();
@@ -400,35 +609,7 @@ function speakExample(ex){
   if(voice)u.voice=voice;
   speechSynthesis.speak(u);
 }
-
-/* 单词：有道真人音；例句：speechSynthesis 自动播（延迟 300ms 让单词先出来） */
-function speakWordAndExample(w,ex){
-  if(!w)return;
-  _stopAll();
-  var url="https://dict.youdao.com/dictvoice?audio="+encodeURIComponent(w)+"&type=2";
-  var a=new Audio(url);
-  window._curAudio=a;
-
-  var speakEx = function(){
-    if(!ex||!window.speechSynthesis)return;
-    var u=new SpeechSynthesisUtterance(ex);
-    u.lang="en-US";u.rate=0.82;
-    if(voice)u.voice=voice;
-    speechSynthesis.speak(u);
-  };
-
-  a.onended = speakEx;
-
-  a.play().catch(function(){
-    // 有道失败 → 用浏览器语音播单词，然后在 onend 里播例句
-    if(!window.speechSynthesis)return;
-    var u=new SpeechSynthesisUtterance(w);
-    u.lang="en-GB";u.rate=0.85;
-    if(voice)u.voice=voice;
-    u.onend = speakEx;
-    speechSynthesis.speak(u);
-  });
-}
+function speakWordAndExample(w,ex){speakWord(w);}
 
 function show(id){
   var pages=document.querySelectorAll(".page");
@@ -479,7 +660,6 @@ function enterViewMode(word){
   VIEW_MODE=true;S.cur=target;S.revealed=false;
   renderCard();speakWord(target.word);
 }
-
 function exitViewMode(){
   if(!VIEW_STACK.length){VIEW_MODE=false;renderCard();return;}
   var prev=VIEW_STACK.pop();
@@ -490,7 +670,6 @@ function exitViewMode(){
   if(!VIEW_STACK.length)VIEW_MODE=false;
   renderCard();
 }
-
 function addCurrentToQueue(){
   if(!S.cur)return;
   var w=S.cur;
@@ -518,6 +697,7 @@ function renderHome(){
   for(var j=0;j<ocs.length;j++){ocs[j].classList.toggle("on",ocs[j].dataset.v===S.order);ocs[j].onclick=function(){S.order=this.dataset.v;renderHome();};}
   var scs=document.getElementById("sizeChips").querySelectorAll(".chip");
   for(var m=0;m<scs.length;m++){scs[m].classList.toggle("on",+scs[m].dataset.v===S.size);scs[m].onclick=function(){S.size=+this.dataset.v;renderHome();};}
+  renderStats();
 }
 
 function getBookList(){
@@ -528,7 +708,6 @@ function getBookList(){
 }
 
 function startStudy(){
-  unlockTTS();
   var list=getBookList();
   if(!list.length){alert("该词库暂无单词");return;}
   if(S.order==="alpha")list.sort(function(a,b){return a.word.localeCompare(b.word);});
@@ -536,6 +715,17 @@ function startStudy(){
   else list.sort(function(){return Math.random()-0.5;});
   S.queue=list.slice(0,Math.min(S.size,list.length));
   S.total=S.queue.length;S.mastered=0;S.finished=false;S.newUnknown=0;S.history=[];
+  S.mode="study";
+  VIEW_MODE=false;VIEW_STACK=[];
+  show("study");nextCard();
+}
+
+function startReview(){
+  var due=getDueWords();
+  if(!due.length){showToast("今天没有要复习的词");return;}
+  S.queue=due.slice();
+  S.total=S.queue.length;S.mastered=0;S.finished=false;S.newUnknown=0;S.history=[];
+  S.mode="review";
   VIEW_MODE=false;VIEW_STACK=[];
   show("study");nextCard();
 }
@@ -549,23 +739,70 @@ function nextCard(){
 function rate(r){
   if(VIEW_MODE)return;
   if(S.revealed||S.finished)return;
-  unlockTTS();
   var w=S.cur;if(!w)return;
+  var lw = w.word.toLowerCase();
   var queueBefore=S.queue.slice();
   var masteredBefore=S.mastered;
+  var showCountBefore=w._showCount||0;
   var wasInUnknown=S.unknown.indexOf(w.word)>=0;
   var addedToUnknown=false;
+  var reviewBefore = reviewData[lw] ? JSON.parse(JSON.stringify(reviewData[lw])) : null;
+  var firstTime = !reviewData[lw];
+
   S.queue.shift();
-  if(r==="known"){S.mastered++;}
-  else{
-    if(r==="unknown"&&!wasInUnknown){S.unknown.push(w.word);S.newUnknown++;addedToUnknown=true;safeSave("vocab_unknown",S.unknown);}
-    S.queue.push(w);
+
+  if(firstTime){
+    reviewData[lw] = {level:0, next:"", learnedAt:todayStr()};
+    updateStatsOnLearn();
   }
-  S.history.push({word:w.word,queueBefore:queueBefore,masteredBefore:masteredBefore,addedToUnknown:addedToUnknown,wasInUnknown:wasInUnknown});
-  S.revealed=true;renderCard();
+
+  if(r==="known"){
+    S.mastered++;
+    w._showCount=0;
+    var cur = reviewData[lw];
+    cur.level = (cur.level||0) + 1;
+    if(cur.level > 6) cur.level = 6;
+    var days = REVIEW_INTERVALS[cur.level] || 1;
+    cur.next = dateAdd(todayStr(), days);
+  }else{
+    if(r==="unknown" && !wasInUnknown){
+      S.unknown.push(w.word);S.newUnknown++;
+      addedToUnknown=true;
+      safeSave("vocab_unknown",S.unknown);
+    }
+    if(r==="unknown"){w._showCount=(w._showCount||0)+3;}
+    else if(r==="vague"){w._showCount=(w._showCount||0)+1;}
+    var cur2 = reviewData[lw];
+    if(cur2.level > 1) cur2.level = cur2.level - 1;
+    cur2.next = dateAdd(todayStr(), 1);
+    if(w._showCount > 0){
+      var maxPos = Math.min(S.queue.length, 10);
+      var pos = maxPos > 0 ? (1 + Math.floor(Math.random()*maxPos)) : 0;
+      if(pos > S.queue.length) pos = S.queue.length;
+      S.queue.splice(pos, 0, w);
+      w._showCount--;
+    }
+  }
+  safeSave("review_data_v1", reviewData);
+
+  S.history.push({
+    word:w.word, queueBefore:queueBefore, masteredBefore:masteredBefore,
+    addedToUnknown:addedToUnknown, wasInUnknown:wasInUnknown,
+    showCountBefore:showCountBefore,
+    reviewBefore: reviewBefore,
+    firstTime: firstTime
+  });
+
+  S.revealed=true;
+  renderCard();
   speakWordAndExample(w.word,w.exEn);
   renderHome();
-  if(r==="unknown"){if(addedToUnknown)showToast("已加入生词本");else if(wasInUnknown)showToast("已在生词本中");}
+  if(r==="unknown"){
+    if(addedToUnknown)showToast("已加入生词本 · 稍后再见");
+    else if(wasInUnknown)showToast("已在生词本 · 稍后再见");
+  }else if(r==="vague"){
+    showToast("模糊 · 稍后再见");
+  }
 }
 
 function undoLastRating(){
@@ -575,12 +812,23 @@ function undoLastRating(){
   S.queue=h.queueBefore;S.mastered=h.masteredBefore;
   S.cur=WORD_MAP[h.word];
   if(!S.cur){for(var i=0;i<WORDS.length;i++){if(WORDS[i].word===h.word){S.cur=WORDS[i];break;}}}
-  S.revealed=false;S.finished=false;
+  if(S.cur){S.cur._showCount=h.showCountBefore||0;}
+  var lw = h.word.toLowerCase();
+  if(h.firstTime){
+    delete reviewData[lw];
+  }else if(h.reviewBefore){
+    reviewData[lw] = h.reviewBefore;
+  }
+  safeSave("review_data_v1", reviewData);
+
+  S.revealed=false;
+  S.finished=false;
   var toastMsg="已撤销，请重新选择";
   if(h.addedToUnknown&&!h.wasInUnknown){
     var newUnknown=[];
     for(var j=0;j<S.unknown.length;j++){if(S.unknown[j]!==h.word)newUnknown.push(S.unknown[j]);}
-    S.unknown=newUnknown;safeSave("vocab_unknown",S.unknown);
+    S.unknown=newUnknown;
+    safeSave("vocab_unknown",S.unknown);
     if(S.newUnknown>0)S.newUnknown--;
     toastMsg="已移出生词本";
   }
@@ -611,13 +859,23 @@ function renderForms(w){
   h+='</div></div>';return h;
 }
 
+function renderRootForWord(w){
+  var info = ROOT_MAP[w.word.toLowerCase()];
+  if(!info) return "";
+  var h = '<div class="root-line"><span class="root-name">'+esc(info.root)+'</span><span class="root-mean">'+esc(info.meaning)+'</span></div>';
+  h += '<div style="font-size:13px;color:var(--text-main);font-family:\'SF Mono\',Menlo,monospace;margin-top:4px">'+esc(info.split)+'</div>';
+  h += '<div class="root-word-note" style="margin-top:6px">'+esc(info.note)+'</div>';
+  return h;
+}
+
 function renderCard(){
   var area=document.getElementById("cardArea");
   var pct=S.total?(S.mastered/S.total*100):0;
   document.getElementById("pFill").style.width=pct+"%";
-  document.getElementById("pText").textContent=S.mastered+" / "+S.total+"  剩余 "+S.queue.length;
+  var modeLabel = S.mode==="review" ? "复习 " : "背诵 ";
+  document.getElementById("pText").textContent=modeLabel+S.mastered+" / "+S.total+"  剩余 "+S.queue.length;
   if(S.finished){
-    var hf='<div class="card finished"><div class="finish-icon">&#127881;</div><h2>本轮完成</h2>';
+    var hf='<div class="card finished"><div class="finish-icon">&#127881;</div><h2>'+(S.mode==="review"?"复习完成":"本轮完成")+'</h2>';
     hf+="<p>共掌握 <b>"+S.total+"</b> 个单词</p>";
     hf+="<p>生词本新增 "+S.newUnknown+" 个</p></div>";
     hf+='<button class="btn-primary" data-act="home">返回首页</button>';
@@ -625,7 +883,7 @@ function renderCard(){
   }
   var w=S.cur;if(!w){area.innerHTML="";return;}
   var out="";
-  if(VIEW_MODE){out+='<div class="view-banner">查看模式 · 不影响本轮背诵</div>';}
+  if(VIEW_MODE){out+='<div class="view-banner">查看模式 · 不影响本轮</div>';}
   out+='<div class="card"><div class="word-head">';
   out+='<div class="word-en">'+w.word+'</div>';
   out+='<div class="phonetic">'+(w.ph||"")+'</div></div>';
@@ -654,6 +912,8 @@ function renderCard(){
       out+='</ul></div>';
     }
     if(w.gram)out+='<div class="gram">'+w.gram+'</div>';
+    var rootHtml = renderRootForWord(w);
+    if(rootHtml){out+='<div class="fold"><button class="fold-btn" data-act="fold">词根词缀</button><div class="fold-body">'+rootHtml+'</div></div>';}
     if((w.syn&&w.syn.length)||(w.ant&&w.ant.length)){
       out+='<div class="fold"><button class="fold-btn" data-act="fold">同义词 / 反义词</button><div class="fold-body">';
       if(w.syn&&w.syn.length){
@@ -704,6 +964,53 @@ function renderCard(){
   }
   area.innerHTML=out;
   enrichCurrentWithDM();
+}
+
+function renderRoots(){
+  var box = document.getElementById("rootList");
+  var html = "";
+  var groups = [
+    {type:"prefix", title:"前缀（改变词义方向）"},
+    {type:"root", title:"词根（核心含义）"},
+    {type:"suffix", title:"后缀（改变词性）"}
+  ];
+  for(var g=0; g<groups.length; g++){
+    var grp = groups[g];
+    var items = ROOTS.filter(function(r){return r.type === grp.type;});
+    if(!items.length) continue;
+    html += '<div class="root-group-title">'+grp.title+'（'+items.length+'）</div>';
+    for(var i=0;i<items.length;i++){
+      var r = items[i];
+      html += '<div class="root-card" data-root-idx="'+ROOTS.indexOf(r)+'">';
+      html += '<div class="root-card-head"><div class="root-card-head-left"><span class="root-card-name">'+esc(r.root)+'</span><span class="root-card-mean">'+esc(r.meaning)+'</span></div><span class="root-card-arrow">▾</span></div>';
+      html += '<div class="root-card-body">';
+      for(var j=0;j<r.words.length;j++){
+        var wd = r.words[j];
+        html += '<div class="root-word" data-root-word="'+esc(wd.w)+'">';
+        html += '<div class="root-word-line"><span class="root-word-en">'+esc(wd.w)+'</span><span class="root-word-split">'+esc(wd.split)+'</span></div>';
+        html += '<div class="root-word-note">'+esc(wd.note)+'</div>';
+        html += '</div>';
+      }
+      html += '</div></div>';
+    }
+  }
+  box.innerHTML = html;
+}
+
+function toggleRootCard(headEl){
+  var card = headEl.closest(".root-card");
+  if(card) card.classList.toggle("open");
+}
+function jumpToRootWord(word){
+  var target = null;
+  for(var i=0;i<WORDS.length;i++){if(WORDS[i].word.toLowerCase() === word.toLowerCase()){target = WORDS[i]; break;}}
+  if(!target){showToast("这个词不在你的词库里"); return;}
+  _stopAll();VIEW_MODE = false;VIEW_STACK = [];S.finished = false;
+  S.cur = target;S.revealed = false;
+  var newQueue = [target];
+  for(var j=0;j<S.queue.length;j++){if(S.queue[j].word !== target.word) newQueue.push(S.queue[j]);}
+  S.queue = newQueue;S.total = Math.max(S.total, S.mastered + S.queue.length);
+  show("study");renderCard();speakWord(target.word);
 }
 
 function renderNote(){
@@ -757,6 +1064,10 @@ function openPopup(anchor){
 
 document.addEventListener("click",function(e){
   var target=e.target;
+  var rootCardHead = target.closest(".root-card-head");
+  if(rootCardHead){ toggleRootCard(rootCardHead); return; }
+  var rootWordEl = target.closest("[data-root-word]");
+  if(rootWordEl){ jumpToRootWord(rootWordEl.dataset.rootWord); return; }
   var sItem=target.closest("[data-search-word]");
   if(sItem){searchJumpTo(sItem.dataset.searchWord);return;}
   if(target.closest(".search-wrap"))return;
@@ -973,11 +1284,15 @@ function loadImportedWords(){
 window.addEventListener("beforeunload",saveImportedWords);
 document.addEventListener("visibilitychange",function(){if(document.visibilityState==="hidden")saveImportedWords();});
 
-document.getElementById("btnStart").onclick=startStudy;
+document.getElementById("btnStudy").onclick=startStudy;
+document.getElementById("btnReview").onclick=startReview;
 document.getElementById("btnBack").onclick=function(){_stopAll();VIEW_MODE=false;VIEW_STACK=[];show("home");renderHome();};
-document.getElementById("btnRestart").onclick=function(){_stopAll();startStudy();};
+document.getElementById("btnRestart").onclick=function(){_stopAll();if(S.mode==="review")startReview();else startStudy();};
 document.getElementById("btnBack2").onclick=function(){show("home");renderHome();};
 document.getElementById("btnNote").onclick=function(){renderNote();show("note");};
+document.getElementById("btnRoots").onclick=function(){renderRoots();show("root");};
+document.getElementById("btnBack3").onclick=function(){show("home");renderHome();};
+document.getElementById("btnRootTop").onclick=function(){window.scrollTo(0,0);};
 document.getElementById("btnClearNote").onclick=function(){
   if(confirm("确定清空生词本吗？")){S.unknown=[];safeSave("vocab_unknown",S.unknown);renderNote();renderHome();}
 };
